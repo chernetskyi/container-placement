@@ -1,0 +1,30 @@
+microservices:
+  API:
+    cpureq: 2
+    memreq: 512
+    num_containers: 3
+  DB:
+    cpureq: 1
+    memreq: 1024
+    num_containers: 2
+nodes:
+  nano:
+    cost: 1
+    cpulim: 1
+    memlim: 512
+    contlim: 1
+  micro:
+    cost: 1.9
+    cpulim: 2
+    memlim: 1024
+    contlim: 2
+  small:
+    cost: 3.61
+    cpulim: 4
+    memlim: 2048
+    contlim: 4
+  medium:
+    cost: 6.86
+    cpulim: 8
+    memlim: 4096
+    contlim: 8
