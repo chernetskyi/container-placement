@@ -11,7 +11,7 @@ pip3 install -r requirements.txt
 ## Usage
 
 ```
-usage: solve.py [-h] {cp-sat,pso} filename
+usage: place.py [-h] {cp-sat,pso} filename
 
 Solve node-container placement.
 

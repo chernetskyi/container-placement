@@ -1,6 +1,6 @@
 from random import choice, choices, random
 
-from solvers.interface import Solver, NoSolutionError
+from model.solver import Solver, NoSolutionError
 
 
 class Particle:
@@ -19,8 +19,8 @@ class PSOSolver(Solver):
     velocity_bound_handling_methods = {None, 'boundary', 'periodic', 'random'}
     position_bound_handling_methods = {'boundary', 'periodic', 'random'}
 
-    def __init__(self, microservices, nodes, iterations, particles, inertia, cognitive, social, velocity_bound_handling, position_bound_handling):
-        super().__init__(microservices, nodes)
+    def __init__(self, scenario, iterations, particles, inertia, cognitive, social, velocity_bound_handling, position_bound_handling):
+        super().__init__(scenario)
 
         self.iterations = iterations
         self.particlel = particles
@@ -106,19 +106,19 @@ class PSOSolver(Solver):
                         self.swarm_best_position = particle.position[:]
                         self.swarm_best_cost = particle.cost
 
-    def solution(self):
+    def print_solution(self):
         if self.swarm_best_cost == float('inf'):
-            raise NoSolutionError('No solution was found.')
+            raise NoSolutionError('Particle Swarm Optimization algorithm failed to find a solution.')
 
-        solution = f'Smallest cost: ${self.swarm_best_cost}'
+        self.solution.cost = self.swarm_best_cost
 
         i = 0
         for microservice in self.microservices:
             for container in range(microservice.num_containers):
-                solution += f'\n{microservice} container {container + 1} placed on node {self.nodes[self.swarm_best_position[i]].name}'
+                self.solution.assign(self.nodes[self.swarm_best_position[i]], microservice, 1)
                 i += 1
 
-        return solution
+        super().print_solution()
 
 
 def get_microservice(microservices, container):

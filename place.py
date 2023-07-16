@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 import argparse
 import pathlib
-import sys
 
-from solvers import PSOSolver, CPSATSolver, NoSolutionError
-
-from model import read_scenario_from_yaml
+from solvers import PSOSolver, CPSATSolver
+from model import Scenario
 
 
 def main():
@@ -14,7 +12,8 @@ def main():
     parser.add_argument('filename', type=pathlib.Path, help='path to YAML file with the scenario')
     args = parser.parse_args()
 
-    scenario = read_scenario_from_yaml(args.filename)
+    scenario = Scenario()
+    scenario.read_from_yaml(args.filename)
 
     solvers = {
         'cp-sat': CPSATSolver,
@@ -23,7 +22,7 @@ def main():
     Solver = solvers[args.solver]
 
     extra_args = {
-        'cp_sat': {},
+        'cp-sat': {},
         'pso': {
             'particles': 20,
             'iterations': 100,
@@ -35,13 +34,9 @@ def main():
         }
     }
 
-    solver = Solver(**scenario, **extra_args[args.solver])
+    solver = Solver(scenario, **extra_args[args.solver])
     solver.solve()
-
-    try:
-        print(solver.solution())
-    except NoSolutionError as e:
-        sys.exit(e)
+    solver.print_solution()
 
 
 if __name__ == '__main__':

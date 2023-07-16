@@ -1,13 +1,3 @@
-microservices:
-  API:
-    cpureq: 2
-    memreq: 512
-    num_containers: 3
-  DB:
-    cpureq: 1
-    memreq: 1024
-    num_containers: 2
-datarate:
 nodes:
   nano:
     cost: 1
@@ -32,6 +22,30 @@ nodes:
     cpulim: 8
     memlim: 4096
     contlim: 16
+    zone: alpha
+  large:
+    cost: 13.03
+    cpulim: 16
+    memlim: 8192
+    contlim: 32
+    zone: alpha
+  xlarge:
+    cost: 24.76
+    cpulim: 32
+    memlim: 16384
+    contlim: 64
+    zone: alpha
+  2xlarge:
+    cost: 47.04
+    cpulim: 64
+    memlim: 32768
+    contlim: 128
+    zone: alpha
+  4xlarge:
+    cost: 89.37
+    cpulim: 128
+    memlim: 65536
+    contlim: 256
     zone: alpha
 bandlim:
   same_zone: 10

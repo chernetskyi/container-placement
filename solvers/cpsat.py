@@ -1,13 +1,13 @@
 from ortools.sat.python import cp_model
 
-from solvers.interface import Solver, NoSolutionError
+from model.solver import Solver, NoSolutionError
 
 
 class CPSATSolver(Solver):
-    def __init__(self, microservices, nodes):
+    def __init__(self, scenario):
         self.solver = cp_model.CpSolver()
         self.model = cp_model.CpModel()
-        super().__init__(microservices, nodes)
+        super().__init__(scenario)
 
     def solve(self):
         self.micros = range(len(self.microservices))
@@ -50,21 +50,16 @@ class CPSATSolver(Solver):
 
         self.status = self.solver.Solve(self.model)
 
-    def solution(self):
+    def print_solution(self):
         if self.status != cp_model.OPTIMAL:
-            raise NoSolutionError('Scenario does not have an optimal solution.')
+            raise NoSolutionError('CP-SAT failed to find an optimal solution.')
 
-        results = f'Total cost: ${self.solver.ObjectiveValue()}'
+        self.solution.cost = self.solver.ObjectiveValue()
+
         for k in self.nods:
             if self.solver.Value(self.used[k]):
-                results += f'\n\n{self.nodes[k]}'
-                cpu, mem, cont = 0, 0, 0
                 for i in self.micros:
                     for j in range(self.microservices[i].num_containers):
-                        if self.solver.Value(self.sched[i, j, k]):
-                            results += f'\n  {self.microservices[i]} container {j+1}'
-                            cpu += self.microservices[i].cpureq
-                            mem += self.microservices[i].memreq
-                            cont += 1
-                results += f'\nUsed {cpu}/{self.nodes[k].cpulim} vCPU, {mem}/{self.nodes[k].memlim} MiB RAM, {cont}/{self.nodes[k].contlim} containers'
-        return results
+                        self.solution.assign(self.nodes[k], self.microservices[i], self.solver.Value(self.sched[i, j, k]))
+
+        super().print_solution()
