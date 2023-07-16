@@ -19,6 +19,10 @@ class Scenario:
                 scenario['microservices'][m]['memreq'],
                 scenario['microservices'][m]['num_containers']
             ) for m in scenario['microservices']]
+
+        datarate = scenario['datarate']
+        self.datarate = {find_microservice(self.microservices, prod): {find_microservice(self.microservices, cons): datarate[prod][cons] for cons in datarate[prod]} for prod in datarate}
+
         self.nodes = [
             Node(
                 n,
@@ -28,3 +32,9 @@ class Scenario:
                 scenario['nodes'][n]['contlim'],
                 scenario['nodes'][n]['zone'],
             ) for n in scenario['nodes']]
+
+        self.bandlim = scenario['bandlim']
+
+
+def find_microservice(microservices, name):
+    return next(filter(lambda m: m.name == name, microservices), None)

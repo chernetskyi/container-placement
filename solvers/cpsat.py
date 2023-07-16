@@ -54,12 +54,12 @@ class CPSATSolver(Solver):
         if self.status != cp_model.OPTIMAL:
             raise NoSolutionError('CP-SAT failed to find an optimal solution.')
 
-        self.solution.cost = self.solver.ObjectiveValue()
+        self.cost = self.solver.ObjectiveValue()
 
         for k in self.nods:
             if self.solver.Value(self.used[k]):
                 for i in self.micros:
                     for j in range(self.microservices[i].num_containers):
-                        self.solution.assign(self.nodes[k], self.microservices[i], self.solver.Value(self.sched[i, j, k]))
+                        self.mapping[self.nodes[k]][self.microservices[i]] += self.solver.Value(self.sched[i, j, k])
 
         super().print_solution()

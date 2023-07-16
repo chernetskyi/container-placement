@@ -44,12 +44,12 @@ class PSOSolver(Solver):
 
         self.particles = [Particle(self.microservices, self.nodes) for _ in range(self.particlel)]
         self.swarm_best_position = None
-        self.swarm_best_cost = float('inf')
+        self.cost = float('inf')
 
         for particle in self.particles:
-            if particle.cost < self.swarm_best_cost:
+            if particle.cost < self.cost:
                 self.swarm_best_position = particle.position[:]
-                self.swarm_best_cost = particle.cost
+                self.cost = particle.cost
 
         if self.swarm_best_position is None:
             self.swarm_best_position = choice([particle.position for particle in self.particles])[:]
@@ -102,20 +102,18 @@ class PSOSolver(Solver):
                     particle.best_position = particle.position[:]
                     particle.best_cost = particle.cost
 
-                    if particle.cost < self.swarm_best_cost:
+                    if particle.cost < self.cost:
                         self.swarm_best_position = particle.position[:]
-                        self.swarm_best_cost = particle.cost
+                        self.cost = particle.cost
 
     def print_solution(self):
-        if self.swarm_best_cost == float('inf'):
+        if self.cost == float('inf'):
             raise NoSolutionError('Particle Swarm Optimization algorithm failed to find a solution.')
-
-        self.solution.cost = self.swarm_best_cost
 
         i = 0
         for microservice in self.microservices:
             for container in range(microservice.num_containers):
-                self.solution.assign(self.nodes[self.swarm_best_position[i]], microservice, 1)
+                self.mapping[self.nodes[self.swarm_best_position[i]]][microservice] += 1
                 i += 1
 
         super().print_solution()

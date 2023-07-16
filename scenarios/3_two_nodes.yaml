@@ -7,7 +7,7 @@ microservices:
     cpureq: 1
     memreq: 1024
     num_containers: 2
-datarate:
+datarate: {}
 nodes:
   nano:
     cost: 1
