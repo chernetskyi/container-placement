@@ -4,15 +4,20 @@ from model.solver import Solver, NoSolutionError
 
 
 class Particle:
-    def __init__(self, microservices, nodes):
+    def __init__(self, microservices, datarate, nodes, bandlim):
         nodel = len(nodes)
         contl = sum(m.num_containers for m in microservices)
 
         self.velocity = choices(list(range(-nodel+1, nodel)), k=contl)
         self.position = choices(list(range(nodel)), k=contl)
         self.best_position = self.position[:]
-        self.cost = cost(microservices, nodes, self.position)
+
+        obj = objective(microservices, datarate, nodes, bandlim, self.position)
+        self.cost = obj['cost']
+        self.dataloss = obj['dataloss']
+
         self.best_cost = self.cost
+        self.best_dataloss = self.dataloss
 
 
 class PSOSolver(Solver):
@@ -42,14 +47,14 @@ class PSOSolver(Solver):
         nodel = len(self.nodes)
         contl = sum(m.num_containers for m in self.microservices)
 
-        self.particles = [Particle(self.microservices, self.nodes) for _ in range(self.particlel)]
+        self.particles = [Particle(self.microservices, self.datarate, self.nodes, self.bandlim) for _ in range(self.particlel)]
         self.swarm_best_position = None
-        self.cost = float('inf')
 
         for particle in self.particles:
-            if particle.cost < self.cost:
+            if (particle.cost < self.cost) and (particle.dataloss < self.dataloss):
                 self.swarm_best_position = particle.position[:]
                 self.cost = particle.cost
+                self.dataloss = particle.dataloss
 
         if self.swarm_best_position is None:
             self.swarm_best_position = choice([particle.position for particle in self.particles])[:]
@@ -97,14 +102,19 @@ class PSOSolver(Solver):
 
                     particle.position[dim] = dim_position
 
-                particle.cost = cost(self.microservices, self.nodes, particle.position)
-                if particle.cost < particle.best_cost:
+                obj = objective(self.microservices, self.datarate, self.nodes, self.bandlim, particle.position)
+                particle.cost = obj['cost']
+                particle.dataloss = obj['dataloss']
+
+                if (particle.cost < particle.best_cost) and (particle.dataloss < particle.best_dataloss):
                     particle.best_position = particle.position[:]
                     particle.best_cost = particle.cost
+                    particle.best_dataloss = particle.dataloss
 
-                    if particle.cost < self.cost:
+                    if (particle.cost < self.cost) and (particle.dataloss < self.dataloss):
                         self.swarm_best_position = particle.position[:]
                         self.cost = particle.cost
+                        self.dataloss = particle.dataloss
 
     def print_solution(self):
         if self.cost == float('inf'):
@@ -128,20 +138,51 @@ def get_microservice(microservices, container):
     raise IndexError('Specified container does not belong to any microservice')
 
 
-def cost(microservices, nodes, position):
+def objective(microservices, datarate, nodes, bandlim, position):
+    mapping = {node: {microservice: 0 for microservice in microservices} for node in nodes}
+
+    nods = nodes[:]
     containers = sum(m.num_containers for m in microservices)
 
     for container in range(containers):
-        node = nodes[position[container]]
+        node = nods[position[container]]
         microservice = microservices[get_microservice(microservices, container)]
+
         if not node.fits(microservice):
-            return float('inf')
+            return {'cost': float('inf'), 'dataloss': float('inf')}
+
         node.cont += 1
         node.cpu += microservice.cpureq
         node.mem += microservice.memreq
 
-    value = sum(node.cost for node in nodes if node.cont)
+        mapping[node][microservice] += 1
 
-    nodes = list(map(lambda n: n.reset(), nodes))
+    mapping = {n: {m: mapping[n][m] for m in mapping[n] if mapping[n][m]} for n in mapping}
+    mapping = {n: mapping[n] for n in mapping if mapping[n]}
 
-    return value
+    cost = sum(node.cost for node in mapping)
+
+    dataloss = 0
+
+    for node1 in mapping:
+        for node2 in mapping:
+            dataloss += max(0, band(mapping, datarate, node1, node2) - bandlimf(bandlim, node1, node2))
+
+    return {'cost': cost, 'dataloss': dataloss}
+
+
+def band(mapping, datarate, node1, node2):
+    band = 0
+    for m1 in mapping[node1]:
+        for m2 in mapping[node2]:
+            band += datarate[m1][m2] / m1.num_containers * mapping[node1][m1]
+    return band
+
+
+def bandlimf(bandlim, node1, node2):
+    if node1.name == node2.name:
+        return float('inf')
+    elif node1.zone == node2.zone:
+        return bandlim['same_zone']
+    else:
+        return bandlim['different_zones']
