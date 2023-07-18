@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import pathlib
+import random
 
 from solvers import PSOSolver, CPSATSolver
 from model import Scenario
@@ -8,9 +9,12 @@ from model import Scenario
 
 def main():
     parser = argparse.ArgumentParser(description='Solve node-container placement.')
-    parser.add_argument('solver', choices={'cp-sat', 'pso'}, help='name of the solver to use')
+    parser.add_argument('--seed', type=int, help='value to initialize the random number generator')
+    parser.add_argument('solver', choices=('cp-sat', 'pso'), help='name of the solver to use')
     parser.add_argument('filename', type=pathlib.Path, help='path to YAML file with the scenario')
     args = parser.parse_args()
+
+    random.seed(args.seed)
 
     scenario = Scenario()
     scenario.read_from_yaml(args.filename)

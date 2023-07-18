@@ -11,7 +11,7 @@ pip3 install -r requirements.txt
 ## Usage
 
 ```
-usage: place.py [-h] {cp-sat,pso} filename
+usage: place.py [-h] [--seed SEED] {pso,cp-sat} filename
 
 Solve node-container placement.
 
@@ -21,6 +21,7 @@ positional arguments:
 
 options:
   -h, --help    show this help message and exit
+  --seed SEED   value to initialize the random number generator
 ```
 
 ## Available solvers
