@@ -1,13 +1,13 @@
 class Solver:
     def __init__(self, scenario):
-        self.microservices = scenario.microservices
+        self.micros = scenario.microservices
         self.nodes = scenario.nodes
         self.bandlim = scenario.bandlim
-        self.mapping = {node: {microservice: 0 for microservice in self.microservices} for node in self.nodes}
+        self.mapping = {n: {m: 0 for m in self.micros} for n in self.nodes}
         self.cost = float('inf')
         self.dataloss = float('inf')
 
-        self.datarate = {m1: {m2: 0 for m2 in self.microservices} for m1 in self.microservices}
+        self.datarate = {m1: {m2: 0 for m2 in self.micros} for m1 in self.micros}
         for m1 in scenario.datarate:
             for m2 in scenario.datarate[m1]:
                 self.datarate[m1][m2] = scenario.datarate[m1][m2]
@@ -28,12 +28,12 @@ class Solver:
             mem = 0
             cont = 0
 
-            for microservice in mapping[node]:
-                s += f'\n  - {mapping[node][microservice]} containers of microservice "{microservice.name}"'
+            for micro in mapping[node]:
+                s += f'\n  - {mapping[node][micro]} containers of microservice "{micro.name}"'
 
-                num = mapping[node][microservice]
-                cpu += num * microservice.cpureq
-                mem += num * microservice.memreq
+                num = mapping[node][micro]
+                cpu += num * micro.cpureq
+                mem += num * micro.memreq
                 cont += num
 
             s += f'\n{cpu}/{node.cpulim} vCPU, {mem}/{node.memlim} MiB RAM, {cont}/{node.contlim} containers\n'

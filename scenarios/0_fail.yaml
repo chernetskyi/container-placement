@@ -2,7 +2,7 @@ microservices:
   TooBig:
     cpureq: 100
     memreq: 1048576
-    num_containers: 1
+    containers: 1
 datarate: {}
 nodes:
   nano:

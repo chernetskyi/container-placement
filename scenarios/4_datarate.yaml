@@ -2,15 +2,15 @@ microservices:
   foo:
     cpureq: 1
     memreq: 512
-    num_containers: 1
+    containers: 1
   bar:
     cpureq: 1
     memreq: 512
-    num_containers: 1
+    containers: 1
   bazz:
     cpureq: 1
     memreq: 512
-    num_containers: 1
+    containers: 1
 datarate:
   foo:
     bar: 15

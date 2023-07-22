@@ -2,7 +2,7 @@ microservices:
   API:
     cpureq: 2
     memreq: 512
-    num_containers: 1
+    containers: 1
 datarate: {}
 nodes:
   nano:

@@ -4,15 +4,15 @@ from model.solver import Solver, NoSolutionError
 
 
 class Particle:
-    def __init__(self, microservices, datarate, nodes, bandlim):
+    def __init__(self, micros, datarate, nodes, bandlim):
         nodel = len(nodes)
-        contl = sum(m.num_containers for m in microservices)
+        contl = sum(m.containers for m in micros)
 
         self.velocity = choices(list(range(-nodel+1, nodel)), k=contl)
         self.position = choices(list(range(nodel)), k=contl)
         self.best_position = self.position[:]
 
-        obj = objective(microservices, datarate, nodes, bandlim, self.position)
+        obj = objective(micros, datarate, nodes, bandlim, self.position)
         self.cost = obj['cost']
         self.dataloss = obj['dataloss']
 
@@ -45,9 +45,9 @@ class PSOSolver(Solver):
 
     def solve(self):
         nodel = len(self.nodes)
-        contl = sum(m.num_containers for m in self.microservices)
+        contl = sum(m.containers for m in self.micros)
 
-        self.particles = [Particle(self.microservices, self.datarate, self.nodes, self.bandlim) for _ in range(self.particlel)]
+        self.particles = [Particle(self.micros, self.datarate, self.nodes, self.bandlim) for _ in range(self.particlel)]
         self.swarm_best_position = None
 
         for particle in self.particles:
@@ -102,7 +102,7 @@ class PSOSolver(Solver):
 
                     particle.position[dim] = dim_position
 
-                obj = objective(self.microservices, self.datarate, self.nodes, self.bandlim, particle.position)
+                obj = objective(self.micros, self.datarate, self.nodes, self.bandlim, particle.position)
                 particle.cost = obj['cost']
                 particle.dataloss = obj['dataloss']
 
@@ -121,41 +121,41 @@ class PSOSolver(Solver):
             raise NoSolutionError('Particle Swarm Optimization algorithm failed to find a solution.')
 
         i = 0
-        for microservice in self.microservices:
-            for container in range(microservice.num_containers):
-                self.mapping[self.nodes[self.swarm_best_position[i]]][microservice] += 1
+        for micro in self.micros:
+            for container in range(micro.containers):
+                self.mapping[self.nodes[self.swarm_best_position[i]]][micro] += 1
                 i += 1
 
         super().print_solution()
 
 
-def get_microservice(microservices, container):
-    for m in range(len(microservices)):
-        microservice_containers = microservices[m].num_containers
-        if container < microservice_containers:
+def get_microservice(micros, container):
+    for m in range(len(micros)):
+        micro_containers = micros[m].containers
+        if container < micro_containers:
             return m
-        container -= microservice_containers
+        container -= micro_containers
     raise IndexError('Specified container does not belong to any microservice')
 
 
-def objective(microservices, datarate, nodes, bandlim, position):
-    mapping = {node: {microservice: 0 for microservice in microservices} for node in nodes}
+def objective(micros, datarate, nodes, bandlim, position):
+    mapping = {node: {micro: 0 for micro in micros} for node in nodes}
 
     nods = nodes[:]
-    containers = sum(m.num_containers for m in microservices)
+    containers = sum(m.containers for m in micros)
 
     for container in range(containers):
         node = nods[position[container]]
-        microservice = microservices[get_microservice(microservices, container)]
+        micro = micros[get_microservice(micros, container)]
 
-        if not node.fits(microservice):
+        if not node.fits(micro):
             return {'cost': float('inf'), 'dataloss': float('inf')}
 
         node.cont += 1
-        node.cpu += microservice.cpureq
-        node.mem += microservice.memreq
+        node.cpu += micro.cpureq
+        node.mem += micro.memreq
 
-        mapping[node][microservice] += 1
+        mapping[node][micro] += 1
 
     mapping = {n: {m: mapping[n][m] for m in mapping[n] if mapping[n][m]} for n in mapping}
     mapping = {n: mapping[n] for n in mapping if mapping[n]}
@@ -175,7 +175,7 @@ def band(mapping, datarate, node1, node2):
     band = 0
     for m1 in mapping[node1]:
         for m2 in mapping[node2]:
-            band += datarate[m1][m2] / m1.num_containers * mapping[node1][m1]
+            band += datarate[m1][m2] / m1.containers * mapping[node1][m1]
     return band
 
 

@@ -17,7 +17,7 @@ class Scenario:
                 m,
                 scenario['microservices'][m]['cpureq'],
                 scenario['microservices'][m]['memreq'],
-                scenario['microservices'][m]['num_containers']
+                scenario['microservices'][m]['containers']
             ) for m in scenario['microservices']]
 
         datarate = scenario['datarate']

@@ -2,11 +2,11 @@ microservices:
   API:
     cpureq: 2
     memreq: 512
-    num_containers: 3
+    containers: 3
   DB:
     cpureq: 1
     memreq: 1024
-    num_containers: 2
+    containers: 2
 datarate: {}
 nodes:
   nano:
