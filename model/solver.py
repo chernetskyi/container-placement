@@ -1,7 +1,8 @@
 class Solver:
     def __init__(self, scenario):
         self.scenario = scenario
-        self.mapping = {n: {m: 0 for m in scenario.micros} for n in scenario.nodes}
+        self.mapping = {n: {m: 0 for m in scenario.micros}
+                        for n in scenario.nodes}
         self.cost = float('inf')
         self.dataloss = float('inf')
 
@@ -9,7 +10,8 @@ class Solver:
         raise NotImplementedError()
 
     def print_solution(self):
-        mapping = {n: {m: self.mapping[n][m] for m in self.mapping[n] if self.mapping[n][m]} for n in self.mapping}
+        mapping = {n: {m: self.mapping[n][m] for m in self.mapping[n]
+                       if self.mapping[n][m]} for n in self.mapping}
         mapping = {n: mapping[n] for n in mapping if mapping[n]}
 
         s = f'Total cost: {self.cost:.2f}\nData throttled: {self.dataloss}\n'

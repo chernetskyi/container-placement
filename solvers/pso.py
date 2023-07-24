@@ -9,7 +9,7 @@ class Particle:
         n_len = len(scenario.nodes)
         c_len = sum(m.containers for m in scenario.micros)
 
-        self.velocity = random.choices(list(range(-n_len+1, n_len)), k=c_len)
+        self.velocity = random.choices(list(range(-n_len + 1, n_len)), k=c_len)
         self.position = random.choices(list(range(n_len)), k=c_len)
         self.best_position = self.position[:]
 
@@ -22,7 +22,17 @@ class Particle:
 
 
 class PSOSolver(Solver):
-    def __init__(self, scenario, particles, iterations, inertia, cognitive, social, velocity_handling, position_handling):
+    def __init__(
+            self,
+            scenario,
+            particles,
+            iterations,
+            inertia,
+            cognitive,
+            social,
+            velocity_handling,
+            position_handling):
+
         super().__init__(scenario)
 
         handling_methods = {
@@ -43,28 +53,30 @@ class PSOSolver(Solver):
         self.particles = [Particle(scenario) for _ in range(particles)]
 
         for particle in self.particles:
-            if (particle.cost <= self.cost) and (particle.dataloss <= self.dataloss):
+            if (particle.cost <= self.cost) and \
+               (particle.dataloss <= self.dataloss):
                 self.best_position = particle.position[:]
                 self.cost = particle.cost
                 self.dataloss = particle.dataloss
 
         if self.best_position is None:
-            self.best_position = random.choice([particle.position for particle in self.particles])[:]
+            self.best_position = random.choice([particle.position
+                                                for particle in self.particles])[:]
 
-    def __particle_update_velocity(self, particle, dim):
+    def __update_velocity(self, part, dim):
         n_len = len(self.scenario.nodes)
 
         r1 = random.random()
         r2 = random.random()
 
-        dim_velocity = self.inertia * particle.velocity[dim] + \
-            self.cognitive * r1 * (particle.best_position[dim] - particle.position[dim]) + \
-            self.social * r2 * (self.best_position[dim] - particle.position[dim])
+        dim_velocity = self.inertia * part.velocity[dim] + \
+            self.cognitive * r1 * (part.best_position[dim] - part.position[dim]) + \
+            self.social * r2 * (self.best_position[dim] - part.position[dim])
         return self.handle_velocity(dim_velocity, -(n_len - 1), n_len)
 
-    def __particle_update_position(self, particle, dim):
+    def __update_position(self, part, dim):
         n_len = len(self.scenario.nodes)
-        dim_position = particle.position[dim] + int(particle.velocity[dim])
+        dim_position = part.position[dim] + int(part.velocity[dim])
         return self.handle_position(dim_position, 0, n_len)
 
     def solve(self):
@@ -73,26 +85,29 @@ class PSOSolver(Solver):
                 c_len = sum(m.containers for m in self.scenario.micros)
 
                 for dim in range(c_len):
-                    particle.velocity[dim] = self.__particle_update_velocity(particle, dim)
-                    particle.position[dim] = self.__particle_update_position(particle, dim)
+                    particle.velocity[dim] = self.__update_velocity(particle, dim)
+                    particle.position[dim] = self.__update_position(particle, dim)
 
                 obj = objective(self.scenario, particle.position)
                 particle.cost = obj['cost']
                 particle.dataloss = obj['dataloss']
 
-                if (particle.cost <= particle.best_cost) and (particle.dataloss <= particle.best_dataloss):
+                if (particle.cost <= particle.best_cost) and \
+                   (particle.dataloss <= particle.best_dataloss):
                     particle.best_position = particle.position[:]
                     particle.best_cost = particle.cost
                     particle.best_dataloss = particle.dataloss
 
-                    if (particle.cost <= self.cost) and (particle.dataloss <= self.dataloss):
+                    if (particle.cost <= self.cost) and \
+                       (particle.dataloss <= self.dataloss):
                         self.best_position = particle.position[:]
                         self.cost = particle.cost
                         self.dataloss = particle.dataloss
 
     def print_solution(self):
         if self.cost == float('inf'):
-            raise NoSolutionError('Particle Swarm Optimization algorithm failed to find a solution.')
+            raise NoSolutionError(
+                'Particle Swarm Optimization algorithm failed to find a solution.')
 
         i = 0
         for micro in self.scenario.micros:
@@ -120,7 +135,8 @@ class PSOSolver(Solver):
         return value
 
     def random_handle(value, min, max):
-        return value if min <= value < max else random.choice(list(range(min, max)))
+        return value if min <= value < max else \
+            random.choice(list(range(min, max)))
 
 
 def objective(scenario, position):
@@ -146,10 +162,10 @@ def objective(scenario, position):
 
     cost = sum(node.cost for node in mapping)
 
-    dataloss = 0
+    loss = 0
 
-    for node1 in mapping:
-        for node2 in mapping:
-            dataloss += max(0, scenario.band(mapping, node1, node2) - scenario.bandlim(node1, node2))
+    for n1 in mapping:
+        for n2 in mapping:
+            loss += max(0, scenario.band(mapping, n1, n2) - scenario.bandlim(n1, n2))
 
-    return {'cost': cost, 'dataloss': dataloss}
+    return {'cost': cost, 'dataloss': loss}

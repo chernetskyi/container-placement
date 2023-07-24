@@ -15,5 +15,5 @@ class Node:
 
     def fits(self, container):
         return (self.cpu + container.cpureq) <= self.cpulim and \
-                (self.mem + container.memreq) <= self.memlim and \
-                (self.cont + 1) <= self.contlim
+               (self.mem + container.memreq) <= self.memlim and \
+               (self.cont + 1) <= self.contlim

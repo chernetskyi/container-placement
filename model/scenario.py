@@ -40,7 +40,8 @@ class Scenario:
         for producer in mapping[node1]:
             for consumer in mapping[node2]:
                 datarate = self.datarate.get(producer, {}).get(consumer, 0)
-                band += datarate / producer.containers * mapping[node1][producer]
+                band += datarate / producer.containers * \
+                    mapping[node1][producer]
         return band
 
     def bandlim(self, node1, node2):
