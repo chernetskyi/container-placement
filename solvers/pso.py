@@ -1,7 +1,7 @@
 import random
 
 from model.solver import Solver, NoSolutionError
-from model.utils import clean_double_dict, get_microservice
+from model.utils import get_microservice
 
 
 class Particle:
@@ -11,14 +11,10 @@ class Particle:
 
         self.velocity = random.choices(list(range(-n_len + 1, n_len)), k=c_len)
         self.position = random.choices(list(range(n_len)), k=c_len)
-        self.best_position = self.position[:]
+        self.best_position = self.position
 
-        obj = objective(scenario, self.position)
-        self.cost = obj['cost']
-        self.dataloss = obj['dataloss']
-
+        self.cost = objective(scenario, self.position)
         self.best_cost = self.cost
-        self.best_dataloss = self.dataloss
 
 
 class PSOSolver(Solver):
@@ -53,15 +49,13 @@ class PSOSolver(Solver):
         self.particles = [Particle(scenario) for _ in range(particles)]
 
         for particle in self.particles:
-            if (particle.cost <= self.cost) and \
-               (particle.dataloss <= self.dataloss):
-                self.best_position = particle.position[:]
+            if particle.cost < self.cost:
+                self.best_position = particle.position
                 self.cost = particle.cost
-                self.dataloss = particle.dataloss
 
         if self.best_position is None:
             self.best_position = random.choice([particle.position
-                                                for particle in self.particles])[:]
+                                                for particle in self.particles])
 
     def __update_velocity(self, part, dim):
         n_len = len(self.scenario.nodes)
@@ -80,29 +74,25 @@ class PSOSolver(Solver):
         return self.handle_position(dim_position, 0, n_len)
 
     def solve(self):
+        c_ran = range(sum(m.containers for m in self.scenario.micros))
+
         for _ in range(self.iterations):
             for particle in self.particles:
-                c_len = sum(m.containers for m in self.scenario.micros)
 
-                for dim in range(c_len):
+                for dim in c_ran:
                     particle.velocity[dim] = self.__update_velocity(particle, dim)
                     particle.position[dim] = self.__update_position(particle, dim)
 
                 obj = objective(self.scenario, particle.position)
-                particle.cost = obj['cost']
-                particle.dataloss = obj['dataloss']
+                particle.cost = obj
 
-                if (particle.cost <= particle.best_cost) and \
-                   (particle.dataloss <= particle.best_dataloss):
-                    particle.best_position = particle.position[:]
+                if particle.cost < particle.best_cost:
+                    particle.best_position = particle.position
                     particle.best_cost = particle.cost
-                    particle.best_dataloss = particle.dataloss
 
-                    if (particle.cost <= self.cost) and \
-                       (particle.dataloss <= self.dataloss):
-                        self.best_position = particle.position[:]
+                    if particle.cost < self.cost:
+                        self.best_position = particle.position
                         self.cost = particle.cost
-                        self.dataloss = particle.dataloss
 
     def print_solution(self):
         if self.cost == float('inf'):
@@ -143,14 +133,14 @@ def objective(scenario, position):
     mapping = {n: {m: 0 for m in scenario.micros} for n in scenario.nodes}
 
     nodes = scenario.nodes[:]
-    c_len = sum(m.containers for m in scenario.micros)
+    c_ran = range(sum(m.containers for m in scenario.micros))
 
-    for container in range(c_len):
+    for container in c_ran:
         node = nodes[position[container]]
         micro = scenario.micros[get_microservice(scenario.micros, container)]
 
         if not node.fits(micro):
-            return {'cost': float('inf'), 'dataloss': float('inf')}
+            return float('inf')
 
         node.cont += 1
         node.cpu += micro.cpureq
@@ -158,14 +148,7 @@ def objective(scenario, position):
 
         mapping[node][micro] += 1
 
-    mapping = clean_double_dict(mapping)
+    infra_cost = scenario.infra_cost(mapping)
+    data_cost = scenario.data_cost(mapping)
 
-    cost = sum(node.cost for node in mapping)
-
-    loss = 0
-
-    for n1 in mapping:
-        for n2 in mapping:
-            loss += max(0, scenario.band(mapping, n1, n2) - scenario.bandlim(n1, n2))
-
-    return {'cost': cost, 'dataloss': loss}
+    return infra_cost + data_cost

@@ -2,6 +2,7 @@ import yaml
 
 from model.microservice import Microservice
 from model.node import Node
+from model.utils import clean_double_dict
 
 
 class Scenario:
@@ -32,22 +33,28 @@ class Scenario:
                 scenario['nodes'][n]['zone'],
             ) for n in scenario['nodes']]
 
-        self.__same_zone = scenario['bandlim']['same_zone']
-        self.__different_zones = scenario['bandlim']['different_zones']
+        self.__intra = scenario['data_cost']['intrazone']
+        self.__inter = scenario['data_cost']['interzone']
 
-    def band(self, mapping, node1, node2):
-        band = 0
-        for producer in mapping[node1]:
-            for consumer in mapping[node2]:
-                datarate = self.datarate.get(producer, {}).get(consumer, 0)
-                band += datarate / producer.containers * \
-                    mapping[node1][producer]
-        return band
+    def infra_cost(self, mapping):
+        mp = clean_double_dict(mapping)
+        return sum(node.cost for node in mp)
 
-    def bandlim(self, node1, node2):
-        if node1.name == node2.name:
-            return float('inf')
-        elif node1.zone == node2.zone:
-            return self.__same_zone
-        else:
-            return self.__different_zones
+    def data_cost(self, mapping):
+        mp = clean_double_dict(mapping)
+
+        cost = 0
+
+        for n1 in mp:
+            for n2 in mp:
+                if n1.name == n2.name:
+                    continue
+
+                data = 0
+                for prod in mp[n1]:
+                    for cons in mp[n2]:
+                        data += self.datarate.get(prod.name, {}).get(cons.name, 0)
+
+                cost += data * (self.__intra if n1.zone == n2.zone else self.__inter)
+
+        return cost

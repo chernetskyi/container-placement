@@ -29,6 +29,6 @@ nodes:
     memlim: 4096
     contlim: 16
     zone: alpha
-bandlim:
-  same_zone: 10
-  different_zones: 5
+data_cost:
+  intrazone: 0.01
+  interzone: 0.02
