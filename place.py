@@ -33,8 +33,8 @@ def main():
             'inertia':  0.75,
             'cognitive':  0.125,
             'social':  0.125,
-            'velocity_bound_handling': None,
-            'position_bound_handling': 'boundary'
+            'velocity_handling': 'none',
+            'position_handling': 'boundary'
         }
     }
 

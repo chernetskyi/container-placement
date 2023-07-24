@@ -10,41 +10,43 @@ class CPSATSolver(Solver):
         super().__init__(scenario)
 
     def solve(self):
-        self.micros = range(len(self.micros))
-        self.conts = range(sum(m.containers for m in self.micros))
-        self.nods = range(len(self.nodes))
+        micros = self.scenario.micros
+        nodes = self.scenario.nodes
+
+        self.__m_range = range(len(micros))
+        self.__n_range = range(len(nodes))
 
         objective = []
 
         # Variables
         self.used = {}  # does node have any containers scheduled
         self.sched = {}  # is container scheduled on a node
-        for k in self.nods:
+        for k in self.__n_range:
             self.used[k] = self.model.NewBoolVar('used')
-            for i in self.micros:
-                for j in range(self.micros[i].containers):
+            for i in self.__m_range:
+                for j in range(micros[i].containers):
                     self.sched[i, j, k] = self.model.NewBoolVar('sched')
-            self.model.AddMaxEquality(self.used[k], [self.sched[i, j, k] for i in self.micros for j in range(self.micros[i].containers)])
+            self.model.AddMaxEquality(self.used[k], [self.sched[i, j, k] for i in self.__m_range for j in range(micros[i].containers)])
 
         # Constraints
         # Every container is scheduled exactly once
-        for i in self.micros:
-            for j in range(self.micros[i].containers):
-                self.model.AddExactlyOne(self.sched[i, j, k] for k in self.nods)
+        for i in self.__m_range:
+            for j in range(micros[i].containers):
+                self.model.AddExactlyOne(self.sched[i, j, k] for k in self.__n_range)
 
-        for k in self.nods:
+        for k in self.__n_range:
             # Container limit
-            self.model.Add(sum(self.sched[i, j, k] for i in self.micros for j in range(self.micros[i].containers)) <= self.nodes[k].contlim)
+            self.model.Add(sum(self.sched[i, j, k] for i in self.__m_range for j in range(micros[i].containers)) <= nodes[k].contlim)
 
             # CPU limit
-            self.model.Add(sum(self.sched[i, j, k] * self.micros[i].cpureq for i in self.micros for j in range(self.micros[i].containers)) <= self.nodes[k].cpulim)
+            self.model.Add(sum(self.sched[i, j, k] * micros[i].cpureq for i in self.__m_range for j in range(micros[i].containers)) <= nodes[k].cpulim)
 
             # Memory limit
-            self.model.Add(sum(self.sched[i, j, k] * self.micros[i].memreq for i in self.micros for j in range(self.micros[i].containers)) <= self.nodes[k].memlim)
+            self.model.Add(sum(self.sched[i, j, k] * micros[i].memreq for i in self.__m_range for j in range(micros[i].containers)) <= nodes[k].memlim)
 
             # Objectives
             # Cost
-            objective.append(cp_model.LinearExpr.Term(self.used[k], self.nodes[k].cost))
+            objective.append(cp_model.LinearExpr.Term(self.used[k], nodes[k].cost))
 
         self.model.Minimize(cp_model.LinearExpr.Sum(objective))
 
@@ -56,10 +58,13 @@ class CPSATSolver(Solver):
 
         self.cost = self.solver.ObjectiveValue()
 
-        for k in self.nods:
+        micros = self.scenario.micros
+        nodes = self.scenario.nodes
+
+        for k in self.__n_range:
             if self.solver.Value(self.used[k]):
-                for i in self.micros:
-                    for j in range(self.micros[i].containers):
-                        self.mapping[self.nodes[k]][self.micros[i]] += self.solver.Value(self.sched[i, j, k])
+                for i in self.__m_range:
+                    for j in range(micros[i].containers):
+                        self.mapping[nodes[k]][micros[i]] += self.solver.Value(self.sched[i, j, k])
 
         super().print_solution()

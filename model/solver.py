@@ -1,16 +1,9 @@
 class Solver:
     def __init__(self, scenario):
-        self.micros = scenario.microservices
-        self.nodes = scenario.nodes
-        self.bandlim = scenario.bandlim
-        self.mapping = {n: {m: 0 for m in self.micros} for n in self.nodes}
+        self.scenario = scenario
+        self.mapping = {n: {m: 0 for m in scenario.micros} for n in scenario.nodes}
         self.cost = float('inf')
         self.dataloss = float('inf')
-
-        self.datarate = {m1: {m2: 0 for m2 in self.micros} for m1 in self.micros}
-        for m1 in scenario.datarate:
-            for m2 in scenario.datarate[m1]:
-                self.datarate[m1][m2] = scenario.datarate[m1][m2]
 
     def solve(self):
         raise NotImplementedError()
