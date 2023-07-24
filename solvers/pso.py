@@ -112,8 +112,7 @@ class PSOSolver(Solver):
         return value
 
     def random_handle(value, min, max):
-        return value if min <= value < max else \
-            random.choice(list(range(min, max)))
+        return value if min <= value < max else random.randrange(min, max)
 
 
 class Particle:
@@ -121,8 +120,8 @@ class Particle:
         n_len = len(scenario.nodes)
         c_len = sum(m.containers for m in scenario.micros)
 
-        self.velocity = random.choices(list(range(-n_len + 1, n_len)), k=c_len)
-        self.position = random.choices(list(range(n_len)), k=c_len)
+        self.velocity = random.choices(range(-n_len + 1, n_len), k=c_len)
+        self.position = random.choices(range(n_len), k=c_len)
         self.best_position = self.position
 
         self.cost = objective(scenario, self.position)
