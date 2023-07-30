@@ -11,17 +11,22 @@ pip3 install --use-pep517 -r requirements.txt
 ## Usage
 
 ```
-usage: place.py [-h] [--seed SEED] {cp-sat,pso} filename
+usage: place.py [-h] [--log-file LOG_FILE] [--log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}] [-o OUTPUT] [--seed SEED] {cp-sat,pso} scenario
 
 Solve node-container placement.
 
 positional arguments:
-  {cp-sat,pso}  name of the solver to use
-  filename      path to YAML file with the scenario
+  {cp-sat,pso}          name of the solver
+  scenario              scenario YAML file
 
 options:
-  -h, --help    show this help message and exit
-  --seed SEED   value to initialize the random number generator
+  -h, --help            show this help message and exit
+  --log-file LOG_FILE   log file
+  --log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
+                        logging level
+  -o OUTPUT, --output OUTPUT
+                        output file
+  --seed SEED           random number generator seed
 ```
 
 ## Available solvers

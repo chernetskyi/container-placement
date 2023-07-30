@@ -1,3 +1,5 @@
+import logging
+
 from ortools.sat.python import cp_model
 
 from model.solver import Solver, NoSolutionError
@@ -62,8 +64,9 @@ class CPSATSolver(Solver):
 
         self.status = self.solver.Solve(self.model)
 
-    def print_solution(self):
+    def print_solution(self, file):
         if self.status != cp_model.OPTIMAL:
+            logging.error('CP-SAT failed to find an optimal solution')
             raise NoSolutionError('CP-SAT failed to find an optimal solution.')
 
         self.cost = self.solver.ObjectiveValue()
@@ -78,4 +81,4 @@ class CPSATSolver(Solver):
                         scheduled = self.solver.Value(self.sched[i, j, k])
                         self.mapping[nodes[k]][micros[i]] += scheduled
 
-        super().print_solution()
+        super().print_solution(file)

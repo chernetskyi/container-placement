@@ -1,3 +1,4 @@
+import logging
 import random
 
 from model.solver import Solver, NoSolutionError
@@ -8,7 +9,7 @@ class PSOSolver(Solver):
     def solve(self):
         c_ran = range(sum(m.containers for m in self.scenario.micros))
 
-        for _ in range(self.iterations):
+        for i in range(self.iterations):
             for particle in self.particles:
 
                 for dim in c_ran:
@@ -23,6 +24,7 @@ class PSOSolver(Solver):
                     particle.best_cost = particle.cost
 
                     if particle.cost < self.cost:
+                        logging.info(f'Swarm\'s best position updated at iteration {i}/{self.iterations}')
                         self.best_position = particle.position
                         self.cost = particle.cost
 
@@ -42,10 +44,11 @@ class PSOSolver(Solver):
         dim_position = int(part.position[dim] + part.velocity[dim])
         return self.handle_position(dim_position, 0, n_len)
 
-    def print_solution(self):
+    def print_solution(self, file):
         if self.cost == float('inf'):
+            logging.error('Particle Swarm Optimization failed to find a solution')
             raise NoSolutionError(
-                'Particle Swarm Optimization algorithm failed to find a solution.')
+                'Particle Swarm Optimization failed to find a solution.')
 
         i = 0
         for micro in self.scenario.micros:
@@ -53,7 +56,7 @@ class PSOSolver(Solver):
                 self.mapping[self.scenario.nodes[self.best_position[i]]][micro] += 1
                 i += 1
 
-        super().print_solution()
+        super().print_solution(file)
 
     def __init__(
             self,
@@ -91,6 +94,7 @@ class PSOSolver(Solver):
                 self.cost = particle.cost
 
         if self.best_position is None:
+            logging.info('No viable solutions were generated on init')
             self.best_position = random.choice([particle.position
                                                 for particle in self.particles])
 

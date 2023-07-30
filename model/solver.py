@@ -11,7 +11,7 @@ class Solver:
     def solve(self):
         raise NotImplementedError()
 
-    def print_solution(self):
+    def print_solution(self, file):
         mapping = clean_double_dict(self.mapping)
 
         s = f'Total cost: {self.cost:.2f}\n'
@@ -33,7 +33,7 @@ class Solver:
 
             s += f'\n{cpu}/{node.cpulim} vCPU, {mem}/{node.memlim} MiB RAM, {cont}/{node.contlim} containers\n'
 
-        print(s)
+        print(s, file=file)
 
 
 class NoSolutionError(RuntimeError):
