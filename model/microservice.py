@@ -6,4 +6,4 @@ class Microservice:
         self.containers = containers
 
     def __str__(self):
-        return f'Microservice "{self.name}" ({self.containers} containers): {self.cpureq} vCPU, {self.memreq} MiB RAM'
+        return f'Microservice "{self.name}" ({self.containers} containers): {self.cpureq} mCPU, {self.memreq} MiB RAM'

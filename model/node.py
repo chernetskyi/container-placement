@@ -11,7 +11,7 @@ class Node:
         self.cont = 0
 
     def __str__(self):
-        return f'Node "{self.name}" in zone "{self.zone}": ${self.cost}, {self.cpulim} vCPU, {self.memlim} MiB RAM, up to {self.contlim} containers'
+        return f'Node "{self.name}" in zone "{self.zone}": ${self.cost}, {self.cpulim} mCPU, {self.memlim} MiB RAM, up to {self.contlim} containers'
 
     def fits(self, container):
         return (self.cpu + container.cpureq) <= self.cpulim and \
