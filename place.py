@@ -52,6 +52,7 @@ def main():
             'inertia': 0.75,
             'cognitive': 0.125,
             'social': 0.125,
+            'zero_init_velocity': False,
             'velocity_handling': 'none',
             'position_handling': 'boundary'
         }

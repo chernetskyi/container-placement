@@ -66,6 +66,7 @@ class PSOSolver(Solver):
             inertia,
             cognitive,
             social,
+            zero_init_velocity,
             velocity_handling,
             position_handling):
 
@@ -86,7 +87,7 @@ class PSOSolver(Solver):
         self.handle_position = handling_methods[position_handling]
 
         self.best_position = None
-        self.particles = [Particle(scenario) for _ in range(particles)]
+        self.particles = [Particle(scenario, zero_init_velocity) for _ in range(particles)]
 
         for particle in self.particles:
             if particle.cost < self.cost:
@@ -120,11 +121,12 @@ class PSOSolver(Solver):
 
 
 class Particle:
-    def __init__(self, scenario):
+    def __init__(self, scenario, zero_init_velocity):
         n_len = len(scenario.nodes)
         c_len = sum(m.containers for m in scenario.micros)
 
-        self.velocity = random.choices(range(-n_len + 1, n_len), k=c_len)
+        self.velocity = [0] * c_len if zero_init_velocity else \
+                        random.choices(range(-n_len + 1, n_len), k=c_len)
         self.position = random.choices(range(n_len), k=c_len)
         self.best_position = self.position
 
