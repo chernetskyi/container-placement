@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import argparse
 import logging
-import os
 import random
 import sys
 
@@ -58,10 +57,8 @@ def main():
         }
     }
 
-    log_lvl = args.log_level if args.log_level else os.environ.get('LOG_LEVEL',
-                                                                   'WARN').upper()
     logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s',
-                        level=log_lvl,
+                        level=args.log_level,
                         stream=args.log_file)
 
     solver = Solver(scenario, **extra_args[args.solver])
