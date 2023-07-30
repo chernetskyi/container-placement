@@ -1,13 +1,13 @@
 microservices:
   TooBig:
-    cpureq: 100
+    cpureq: 100000
     memreq: 1048576
     containers: 1
 datarate: {}
 nodes:
   nano:
     cost: 1
-    cpulim: 1
+    cpulim: 1000
     memlim: 512
     contlim: 2
     zone: alpha

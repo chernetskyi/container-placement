@@ -1,49 +1,49 @@
 nodes:
   nano:
     cost: 1
-    cpulim: 1
+    cpulim: 1000
     memlim: 512
     contlim: 2
     zone: alpha
   micro:
     cost: 1.9
-    cpulim: 2
+    cpulim: 2000
     memlim: 1024
     contlim: 4
     zone: alpha
   small:
     cost: 3.61
-    cpulim: 4
+    cpulim: 4000
     memlim: 2048
     contlim: 8
     zone: alpha
   medium:
     cost: 6.86
-    cpulim: 8
+    cpulim: 8000
     memlim: 4096
     contlim: 16
     zone: alpha
   large:
     cost: 13.03
-    cpulim: 16
+    cpulim: 16000
     memlim: 8192
     contlim: 32
     zone: alpha
   xlarge:
     cost: 24.76
-    cpulim: 32
+    cpulim: 32000
     memlim: 16384
     contlim: 64
     zone: alpha
   2xlarge:
     cost: 47.04
-    cpulim: 64
+    cpulim: 64000
     memlim: 32768
     contlim: 128
     zone: alpha
   4xlarge:
     cost: 89.37
-    cpulim: 128
+    cpulim: 128000
     memlim: 65536
     contlim: 256
     zone: alpha

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import argparse
-import pathlib
 import random
 
 from solvers import PSOSolver, CPSATSolver
@@ -16,7 +15,7 @@ def main():
                         choices=('cp-sat', 'pso'),
                         help='name of the solver to use')
     parser.add_argument('filename',
-                        type=pathlib.Path,
+                        type=argparse.FileType('r'),
                         help='path to YAML file with the scenario')
     args = parser.parse_args()
 

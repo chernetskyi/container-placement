@@ -6,9 +6,9 @@ from model.utils import clean_double_dict
 
 
 class Scenario:
-    def read_from_yaml(self, filename):
+    def read_from_yaml(self, file):
         scenario = {}
-        with open(filename, 'r') as f:
+        with file as f:
             scenario = yaml.safe_load(f)
         self.read_from_dict(scenario)
 

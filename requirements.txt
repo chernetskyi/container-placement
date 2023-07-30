@@ -1,2 +1,3 @@
-ortools
-pyyaml
+ortools ~= 9.6
+petname ~= 2.6
+pyyaml ~= 6.0

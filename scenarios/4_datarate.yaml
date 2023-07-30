@@ -1,14 +1,14 @@
 microservices:
   foo:
-    cpureq: 1
+    cpureq: 1000
     memreq: 512
     containers: 1
   bar:
-    cpureq: 1
+    cpureq: 1000
     memreq: 512
     containers: 1
   bazz:
-    cpureq: 1
+    cpureq: 1000
     memreq: 512
     containers: 1
 datarate:
@@ -17,13 +17,13 @@ datarate:
 nodes:
   nano:
     cost: 1
-    cpulim: 1
+    cpulim: 1000
     memlim: 512
     contlim: 2
     zone: alpha
   micro:
     cost: 1.9
-    cpulim: 2
+    cpulim: 2000
     memlim: 1024
     contlim: 4
     zone: alpha
