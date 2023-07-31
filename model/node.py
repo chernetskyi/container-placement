@@ -1,3 +1,6 @@
+from model.utils import to_cpu
+
+
 class Node:
     def __init__(self, name, cost, cpulim, memlim, contlim, zone):
         self.name = name
@@ -9,7 +12,7 @@ class Node:
         self.reset()
 
     def __str__(self):
-        return f'Node "{self.name}" in zone "{self.zone}": ${self.cost}, {self.cpulim} mCPU, {self.memlim} MiB RAM, up to {self.contlim} containers'
+        return f'Node "{self.name}" in zone "{self.zone}": ${self.cost}, {to_cpu(self.cpulim)} CPU, {self.memlim} MiB RAM, up to {self.contlim} containers'
 
     def reset(self):
         self.cpu = 0

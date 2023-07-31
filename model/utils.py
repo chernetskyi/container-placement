@@ -17,3 +17,8 @@ def get_microservice(micros, container):
 
 def prepend_indices(lst):
     return list(zip(range(len(lst)), lst))
+
+
+def to_cpu(value):
+    cpu = value / 1000
+    return round(cpu, 2) if cpu % 1 else int(cpu)

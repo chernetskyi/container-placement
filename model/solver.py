@@ -1,4 +1,4 @@
-from model.utils import clean_double_dict
+from model.utils import clean_double_dict, to_cpu
 
 
 class Solver:
@@ -31,7 +31,7 @@ class Solver:
                 mem += num * micro.memreq
                 cont += num
 
-            s += f'\n{cpu}/{node.cpulim} mCPU, {mem}/{node.memlim} MiB RAM, {cont}/{node.contlim} containers\n'
+            s += f'\n{to_cpu(cpu)}/{to_cpu(node.cpulim)} CPU, {mem}/{node.memlim} MiB RAM, {cont}/{node.contlim} containers\n'
 
         print(s, file=file)
 

@@ -1,3 +1,6 @@
+from model.utils import to_cpu
+
+
 class Microservice:
     def __init__(self, name, cpureq, memreq, containers):
         self.name = name
@@ -6,4 +9,4 @@ class Microservice:
         self.containers = containers
 
     def __str__(self):
-        return f'Microservice "{self.name}" ({self.containers} containers): {self.cpureq} mCPU, {self.memreq} MiB RAM'
+        return f'Microservice "{self.name}" ({self.containers} containers): {to_cpu(self.cpureq)} CPU, {self.memreq} MiB RAM'
