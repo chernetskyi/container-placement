@@ -13,3 +13,7 @@ def get_microservice(micros, container):
             return m
         container -= micro_containers
     raise IndexError('Specified container does not belong to any microservice')
+
+
+def prepend_indices(lst):
+    return list(zip(range(len(lst)), lst))

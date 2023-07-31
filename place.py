@@ -16,6 +16,7 @@ def main():
                         help='log file')
     parser.add_argument('--log-level',
                         choices=('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'),
+                        default='WARNING',
                         help='logging level')
     parser.add_argument('-o', '--output',
                         type=argparse.FileType('w'),
@@ -51,6 +52,7 @@ def main():
             'inertia': 0.75,
             'cognitive': 0.125,
             'social': 0.125,
+            'random_init_position': False,
             'zero_init_velocity': False,
             'velocity_handling': 'none',
             'position_handling': 'boundary'

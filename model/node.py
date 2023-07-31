@@ -6,14 +6,23 @@ class Node:
         self.memlim = memlim
         self.contlim = contlim
         self.zone = zone
-        self.cpu = 0
-        self.mem = 0
-        self.cont = 0
+        self.reset()
 
     def __str__(self):
         return f'Node "{self.name}" in zone "{self.zone}": ${self.cost}, {self.cpulim} mCPU, {self.memlim} MiB RAM, up to {self.contlim} containers'
+
+    def reset(self):
+        self.cpu = 0
+        self.mem = 0
+        self.cont = 0
+        return self
 
     def fits(self, container):
         return (self.cpu + container.cpureq) <= self.cpulim and \
                (self.mem + container.memreq) <= self.memlim and \
                (self.cont + 1) <= self.contlim
+
+    def add(self, container):
+        self.cpu += container.cpureq
+        self.mem += container.memreq
+        self.cont += 1
