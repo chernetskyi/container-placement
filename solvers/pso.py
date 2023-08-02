@@ -2,7 +2,7 @@ import logging
 import random
 
 from model.solver import Solver, NoSolutionError
-from model.utils import get_microservice, prepend_indices
+from model.utils import get_microservice
 
 
 class PSOSolver(Solver):
@@ -150,7 +150,7 @@ class Particle:
         n_len = len(scenario.nodes)
         c_len = sum(m.containers for m in scenario.micros)
 
-        nodes = prepend_indices(scenario.nodes)
+        nodes = list(enumerate(scenario.nodes))
         random.shuffle(nodes)
 
         position = [-1] * c_len
