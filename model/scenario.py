@@ -55,6 +55,14 @@ class Scenario:
                     for cons in mp[n2]:
                         data += self.datarate.get(prod.name, {}).get(cons.name, 0)
 
-                cost += data * (self.__intra if n1.zone == n2.zone else self.__inter)
+                cost += data * self.node_data_cost(n1, n2)
 
         return cost
+
+    def node_data_cost(self, n1, n2):
+        if n1.name == n2.name:
+            return 0
+        elif n1.zone == n2.zone:
+            return self.__intra
+        else:
+            return self.__inter

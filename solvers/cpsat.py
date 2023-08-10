@@ -18,7 +18,8 @@ class CPSATSolver(Solver):
         self.__m_range = range(len(micros))
         self.__n_range = range(len(nodes))
 
-        objective = []
+        node_costs = []
+        data_costs = []
 
         # Variables
         self.used = {}  # does node have any containers scheduled
@@ -31,6 +32,16 @@ class CPSATSolver(Solver):
             self.model.AddMaxEquality(self.used[k],
                                       [self.sched[i, j, k] for i in self.__m_range
                                        for j in range(micros[i].containers)])
+
+        self.schedx2 = {}
+        for k1 in self.__n_range:
+            for i1 in self.__m_range:
+                for j1 in range(micros[i1].containers):
+                    for k2 in self.__n_range:
+                        for i2 in self.__m_range:
+                            for j2 in range(micros[i2].containers):
+                                self.schedx2[i1, j1, k1, i2, j2, k2] = self.model.NewBoolVar('schedx2')
+                                self.model.AddMultiplicationEquality(self.schedx2[i1, j1, k1, i2, j2, k2], (self.sched[i1, j1, k1], self.sched[i2, j2, k2]))
 
         # Constraints
         # Every container is scheduled exactly once
@@ -57,10 +68,24 @@ class CPSATSolver(Solver):
 
             # Objectives
             # Cost
-            objective.append(
+            node_costs.append(
                 cp_model.LinearExpr.Term(self.used[k], nodes[k].cost))
 
-        self.model.Minimize(cp_model.LinearExpr.Sum(objective))
+        for k1 in self.__n_range:
+            for i1 in self.__m_range:
+                for j1 in range(micros[i1].containers):
+                    for k2 in self.__n_range:
+                        for i2 in self.__m_range:
+                            for j2 in range(micros[i2].containers):
+                                ndc = self.scenario.node_data_cost(nodes[k1], nodes[k2])
+                                data = self.scenario.datarate.get(micros[i1].name, {}).get(micros[i2].name, 0)
+                                coef = ndc * data / micros[i1].containers / micros[i2].containers
+                                data_costs.append(cp_model.LinearExpr.Term(self.schedx2[i1, j1, k1, i2, j2, k2], coef))
+
+        nodecost = cp_model.LinearExpr.Sum(node_costs)
+        datacost = cp_model.LinearExpr.Sum(data_costs)
+
+        self.model.Minimize(nodecost + datacost)
 
         self.status = self.solver.Solve(self.model)
 
