@@ -26,7 +26,7 @@ def main():
                         type=int,
                         help='random number generator seed')
     parser.add_argument('solver',
-                        choices=('cp-sat', 'pso'),
+                        choices=('cpsat', 'pso'),
                         help='name of the solver')
     parser.add_argument('scenario',
                         type=argparse.FileType('r'),
@@ -35,17 +35,16 @@ def main():
 
     random.seed(args.seed)
 
-    scenario = Scenario()
-    scenario.read_from_yaml(args.scenario)
+    scenario = Scenario(args.scenario)
 
     solvers = {
-        'cp-sat': CPSATSolver,
+        'cpsat': CPSATSolver,
         'pso': PSOSolver
     }
     Solver = solvers[args.solver]
 
     extra_args = {
-        'cp-sat': {},
+        'cpsat': {},
         'pso': {
             'particles': 20,
             'iterations': 100,
@@ -67,7 +66,7 @@ def main():
     solver.solve()
 
     try:
-        solver.print_solution(args.output)
+        print(solver.solution(), file=args.output)
     except NoSolutionError:
         pass
 

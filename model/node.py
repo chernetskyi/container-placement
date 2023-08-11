@@ -5,27 +5,30 @@ class Node:
     def __init__(self, name, cost, cpulim, memlim, contlim, zone):
         self.name = name
         self.cost = cost
-        self.cpulim = cpulim
-        self.memlim = memlim
-        self.contlim = contlim
+        self.cpu, self.cpulim = 0, cpulim
+        self.mem, self.memlim = 0, memlim
+        self.cont, self.contlim = 0, contlim
         self.zone = zone
-        self.reset()
+
+    def info(self):
+        def percentage(x, y):
+            return f'{round(x / y * 100, 2)}%'
+
+        cpu = f'{to_cpu(self.cpu)}/{to_cpu(self.cpulim)} ({percentage(self.cpu, self.cpulim)}) CPU'
+        mem = f'{self.mem}/{self.memlim} ({percentage(self.mem, self.memlim)}) MiB RAM'
+        cont = f'{self.cont}/{self.contlim} ({percentage(self.cont, self.contlim)}) containers'
+
+        return f'{cpu}, {mem}, {cont}'
 
     def __str__(self):
-        return f'Node "{self.name}" in zone "{self.zone}": ${self.cost}, {to_cpu(self.cpulim)} CPU, {self.memlim} MiB RAM, up to {self.contlim} containers'
-
-    def reset(self):
-        self.cpu = 0
-        self.mem = 0
-        self.cont = 0
-        return self
+        return f'Node "{self.name}" in zone "{self.zone}": ${self.cost}, {self.info()}'
 
     def fits(self, container):
         return (self.cpu + container.cpureq) <= self.cpulim and \
                (self.mem + container.memreq) <= self.memlim and \
                (self.cont + 1) <= self.contlim
 
-    def add(self, container):
-        self.cpu += container.cpureq
-        self.mem += container.memreq
-        self.cont += 1
+    def add(self, container, num):
+        self.cpu += container.cpureq * num
+        self.mem += container.memreq * num
+        self.cont += num

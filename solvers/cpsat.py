@@ -1,5 +1,6 @@
 import logging
 
+from itertools import product
 from ortools.sat.python import cp_model
 
 from model.solver import Solver, NoSolutionError
@@ -10,100 +11,95 @@ class CPSATSolver(Solver):
         self.solver = cp_model.CpSolver()
         self.model = cp_model.CpModel()
         super().__init__(scenario)
+        self.__m_range = range(len(self.scenario.micros))
+        self.__n_range = range(len(self.scenario.nodes))
 
-    def solve(self):
-        micros = self.scenario.micros
-        nodes = self.scenario.nodes
-
-        self.__m_range = range(len(micros))
-        self.__n_range = range(len(nodes))
-
-        node_costs = []
-        data_costs = []
-
-        # Variables
+    def __variables(self):
         self.used = {}  # does node have any containers scheduled
         self.sched = {}  # is container scheduled on a node
         for k in self.__n_range:
-            self.used[k] = self.model.NewBoolVar('used')
             for i in self.__m_range:
-                for j in range(micros[i].containers):
+                for j in range(self.micro(i).containers):
                     self.sched[i, j, k] = self.model.NewBoolVar('sched')
+
+            self.used[k] = self.model.NewBoolVar('used')
             self.model.AddMaxEquality(self.used[k],
                                       [self.sched[i, j, k] for i in self.__m_range
-                                       for j in range(micros[i].containers)])
+                                       for j in range(self.micro(i).containers)])
 
-        self.schedx2 = {}
-        for k1 in self.__n_range:
-            for i1 in self.__m_range:
-                for j1 in range(micros[i1].containers):
-                    for k2 in self.__n_range:
-                        for i2 in self.__m_range:
-                            for j2 in range(micros[i2].containers):
-                                self.schedx2[i1, j1, k1, i2, j2, k2] = self.model.NewBoolVar('schedx2')
-                                self.model.AddMultiplicationEquality(self.schedx2[i1, j1, k1, i2, j2, k2], (self.sched[i1, j1, k1], self.sched[i2, j2, k2]))
+        self.schedx2 = {}  # product of two sched variables
+        for k1, k2 in product(self.__n_range, self.__n_range):
+            for i1, i2 in product(self.__m_range, self.__m_range):
+                prod = product(range(self.micro(i1).containers), range(self.micro(i2).containers))
+                for j1, j2 in prod:
+                    self.schedx2[i1, j1, k1, i2, j2, k2] = self.model.NewBoolVar('schedx2')
+                    self.model.AddMultiplicationEquality(self.schedx2[i1, j1, k1, i2, j2, k2], (self.sched[i1, j1, k1], self.sched[i2, j2, k2]))
 
-        # Constraints
+    def __constraints(self):
         # Every container is scheduled exactly once
         for i in self.__m_range:
-            for j in range(micros[i].containers):
-                self.model.AddExactlyOne(
-                    self.sched[i, j, k] for k in self.__n_range)
+            for j in range(self.micro(i).containers):
+                self.model.AddExactlyOne(self.sched[i, j, k] for k in self.__n_range)
 
         for k in self.__n_range:
             # Container limit
-            self.model.Add(sum(self.sched[i, j, k]
-                               for i in self.__m_range
-                               for j in range(micros[i].containers)) <= nodes[k].contlim)
+            self.model.Add(sum(self.sched[i, j, k] for i in self.__m_range
+                               for j in range(self.micro(i).containers)) <= self.node(k).contlim)
 
             # CPU limit
-            self.model.Add(sum(self.sched[i, j, k] * micros[i].cpureq
-                               for i in self.__m_range
-                               for j in range(micros[i].containers)) <= nodes[k].cpulim)
+            self.model.Add(sum(self.sched[i, j, k] * self.micro(i).cpureq for i in self.__m_range
+                               for j in range(self.micro(i).containers)) <= self.node(k).cpulim)
 
             # Memory limit
-            self.model.Add(sum(self.sched[i, j, k] * micros[i].memreq
-                               for i in self.__m_range
-                               for j in range(micros[i].containers)) <= nodes[k].memlim)
+            self.model.Add(sum(self.sched[i, j, k] * self.micro(i).memreq for i in self.__m_range
+                               for j in range(self.micro(i).containers)) <= self.node(k).memlim)
 
-            # Objectives
-            # Cost
+    def __objectives(self):
+        node_costs, data_costs = [], []
+
+        for k in self.__n_range:
             node_costs.append(
-                cp_model.LinearExpr.Term(self.used[k], nodes[k].cost))
+                cp_model.LinearExpr.Term(self.used[k], self.node(k).cost))
 
-        for k1 in self.__n_range:
-            for i1 in self.__m_range:
-                for j1 in range(micros[i1].containers):
-                    for k2 in self.__n_range:
-                        for i2 in self.__m_range:
-                            for j2 in range(micros[i2].containers):
-                                ndc = self.scenario.node_data_cost(nodes[k1], nodes[k2])
-                                data = self.scenario.datarate.get(micros[i1].name, {}).get(micros[i2].name, 0)
-                                coef = ndc * data / micros[i1].containers / micros[i2].containers
-                                data_costs.append(cp_model.LinearExpr.Term(self.schedx2[i1, j1, k1, i2, j2, k2], coef))
+        for k1, k2 in product(self.__n_range, self.__n_range):
+            for i1, i2 in product(self.__m_range, self.__m_range):
+                prod = product(range(self.micro(i1).containers), range(self.micro(i2).containers))
+                for j1, j2 in prod:
+                    ndc = self.scenario.data_cost(self.node(k1).name, self.node(k2).name)
+                    data = self.scenario.data_rate(self.micro(i1).name, self.micro(i2).name)
+                    coef = ndc * data / self.micro(i1).containers / self.micro(i2).containers
+                    data_costs.append(cp_model.LinearExpr.Term(self.schedx2[i1, j1, k1, i2, j2, k2], coef))
 
         nodecost = cp_model.LinearExpr.Sum(node_costs)
         datacost = cp_model.LinearExpr.Sum(data_costs)
 
         self.model.Minimize(nodecost + datacost)
 
-        self.status = self.solver.Solve(self.model)
-
-    def print_solution(self, file):
+    def solution(self):
         if self.status != cp_model.OPTIMAL:
             logging.error('CP-SAT failed to find an optimal solution')
             raise NoSolutionError('CP-SAT failed to find an optimal solution.')
 
         self.cost = self.solver.ObjectiveValue()
 
-        micros = self.scenario.micros
-        nodes = self.scenario.nodes
-
         for k in self.__n_range:
             if self.solver.Value(self.used[k]):
                 for i in self.__m_range:
-                    for j in range(micros[i].containers):
+                    for j in range(self.micro(i).containers):
                         scheduled = self.solver.Value(self.sched[i, j, k])
-                        self.mapping[nodes[k]][micros[i]] += scheduled
+                        self.mapping[self.node(k).name][self.micro(i).name] += scheduled
 
-        super().print_solution(file)
+        return super().solution()
+
+    def solve(self):
+        self.__variables()
+        self.__constraints()
+        self.__objectives()
+
+        self.status = self.solver.Solve(self.model)
+
+    def micro(self, i):
+        return self.scenario.micros[self.scenario.micros_tpl[i]]
+
+    def node(self, i):
+        return self.scenario.nodes[self.scenario.nodes_tpl[i]]

@@ -11,12 +11,12 @@ pip3 install --use-pep517 -r requirements.txt
 ## Usage
 
 ```
-usage: place.py [-h] [--log-file LOG_FILE] [--log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}] [-o OUTPUT] [--seed SEED] {cp-sat,pso} scenario
+usage: place.py [-h] [--log-file LOG_FILE] [--log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}] [-o OUTPUT] [--seed SEED] {cpsat,pso} scenario
 
 Solve node-container placement.
 
 positional arguments:
-  {cp-sat,pso}          name of the solver
+  {cpsat,pso}           name of the solver
   scenario              scenario YAML file
 
 options:

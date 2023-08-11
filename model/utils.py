@@ -6,15 +6,6 @@ def clean_double_dict(d):
     return res
 
 
-def get_microservice(micros, container):
-    for m in range(len(micros)):
-        micro_containers = micros[m].containers
-        if container < micro_containers:
-            return m
-        container -= micro_containers
-    raise IndexError('Specified container does not belong to any microservice')
-
-
 def to_cpu(value):
     cpu = value / 1000
     return round(cpu, 2) if cpu % 1 else int(cpu)

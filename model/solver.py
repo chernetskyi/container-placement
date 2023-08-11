@@ -1,39 +1,33 @@
-from model.utils import clean_double_dict, to_cpu
+from model.utils import clean_double_dict
 
 
 class Solver:
     def __init__(self, scenario):
         self.scenario = scenario
-        self.mapping = {n: {m: 0 for m in scenario.micros}
-                        for n in scenario.nodes}
+        self.mapping = {n: {m: 0 for m in scenario.micros} for n in scenario.nodes}
         self.cost = float('inf')
 
     def solve(self):
         raise NotImplementedError()
 
-    def print_solution(self, file):
+    def solution(self):
         mapping = clean_double_dict(self.mapping)
 
-        s = f'Total cost: {self.cost:.2f}\n'
+        res = f'Total cost: {self.cost:.2f}\n'
 
-        for node in mapping:
-            s += f'\nNode "{node.name}":'
+        for n in mapping:
+            node = self.scenario.nodes[n]
 
-            cpu = 0
-            mem = 0
-            cont = 0
+            res += f'\nNode "{n}":'
 
-            for micro in mapping[node]:
-                s += f'\n  - {mapping[node][micro]} containers of microservice "{micro.name}"'
+            for m in mapping[n]:
+                num = mapping[n][m]
+                node.add(self.scenario.micros[m], num)
+                res += f'\n  - {num} containers of microservice "{m}"'
 
-                num = mapping[node][micro]
-                cpu += num * micro.cpureq
-                mem += num * micro.memreq
-                cont += num
+            res += f'\n{node.info()}\n'
 
-            s += f'\n{to_cpu(cpu)}/{to_cpu(node.cpulim)} CPU, {mem}/{node.memlim} MiB RAM, {cont}/{node.contlim} containers\n'
-
-        print(s, file=file)
+        return res
 
 
 class NoSolutionError(RuntimeError):

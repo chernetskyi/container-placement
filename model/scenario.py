@@ -1,4 +1,5 @@
-import yaml
+from itertools import product
+from yaml import safe_load
 
 from model.microservice import Microservice
 from model.node import Node
@@ -6,63 +7,58 @@ from model.utils import clean_double_dict
 
 
 class Scenario:
-    def read_from_yaml(self, file):
+    def __init__(self, file):
         scenario = {}
         with file as f:
-            scenario = yaml.safe_load(f)
-        self.read_from_dict(scenario)
+            scenario = safe_load(f)
 
-    def read_from_dict(self, scenario):
-        self.micros = [
-            Microservice(
+        self.micros = {
+            m: Microservice(
                 m,
                 scenario['microservices'][m]['cpureq'],
                 scenario['microservices'][m]['memreq'],
                 scenario['microservices'][m]['containers']
-            ) for m in scenario['microservices']]
+            ) for m in scenario['microservices']}
 
-        self.datarate = scenario['datarate']
-
-        self.nodes = [
-            Node(
+        self.nodes = {
+            n: Node(
                 n,
                 scenario['nodes'][n]['cost'],
                 scenario['nodes'][n]['cpulim'],
                 scenario['nodes'][n]['memlim'],
                 scenario['nodes'][n]['contlim'],
                 scenario['nodes'][n]['zone'],
-            ) for n in scenario['nodes']]
+            ) for n in scenario['nodes']}
 
+        self.__datarate = scenario['datarate']
         self.__intra = scenario['data_cost']['intrazone']
         self.__inter = scenario['data_cost']['interzone']
 
-    def infra_cost(self, mapping):
+        self.micros_tpl = tuple(self.micros.keys())
+        self.nodes_tpl = tuple(self.nodes.keys())
+
+        self.conts = sum(map(lambda m: m.containers, self.micros.values()))
+
+    def cost(self, mapping):
         mp = clean_double_dict(mapping)
-        return sum(node.cost for node in mp)
 
-    def data_cost(self, mapping):
-        mp = clean_double_dict(mapping)
+        infra_cost = sum(self.nodes[node].cost for node in mp)
+        data_cost = sum(sum(self.data_rate(prod, cons) for prod, cons in product(mp[n1], mp[n2])) *\
+                        self.data_cost(n1, n2) for n1, n2 in product(mp, mp))
 
-        cost = 0
+        return infra_cost + data_cost
 
-        for n1 in mp:
-            for n2 in mp:
-                if n1.name == n2.name:
-                    continue
+    def data_rate(self, prod, cons):
+        return self.__datarate.get(prod, {}).get(cons, 0)
 
-                data = 0
-                for prod in mp[n1]:
-                    for cons in mp[n2]:
-                        data += self.datarate.get(prod.name, {}).get(cons.name, 0)
-
-                cost += data * self.node_data_cost(n1, n2)
-
-        return cost
-
-    def node_data_cost(self, n1, n2):
-        if n1.name == n2.name:
+    def data_cost(self, n1, n2):
+        if n1 == n2:
             return 0
-        elif n1.zone == n2.zone:
+        elif self.nodes[n1].zone == self.nodes[n2].zone:
             return self.__intra
         else:
             return self.__inter
+
+    def reset_nodes(self):
+        for n in self.nodes.values():
+            n.cpu, n.mem, n.cont = 0, 0, 0
