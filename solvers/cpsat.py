@@ -35,6 +35,8 @@ class CPSATSolver(Solver):
                     self.schedx2[i1, j1, k1, i2, j2, k2] = self.model.NewBoolVar('schedx2')
                     self.model.AddMultiplicationEquality(self.schedx2[i1, j1, k1, i2, j2, k2], (self.sched[i1, j1, k1], self.sched[i2, j2, k2]))
 
+        logging.debug('Variables are successfuly defined')
+
     def __constraints(self):
         # Every container is scheduled exactly once
         for i in self.__m_range:
@@ -53,6 +55,8 @@ class CPSATSolver(Solver):
             # Memory limit
             self.model.Add(sum(self.sched[i, j, k] * self.micro(i).memreq for i in self.__m_range
                                for j in range(self.micro(i).containers)) <= self.node(k).memlim)
+
+        logging.debug('Constraints are successfuly defined')
 
     def __objectives(self):
         node_costs, data_costs = [], []
@@ -75,6 +79,8 @@ class CPSATSolver(Solver):
 
         self.model.Minimize(nodecost + datacost)
 
+        logging.debug('Objective is successfuly defined')
+
     def solution(self):
         if self.status != cp_model.OPTIMAL:
             logging.error('CP-SAT failed to find an optimal solution')
@@ -96,7 +102,9 @@ class CPSATSolver(Solver):
         self.__constraints()
         self.__objectives()
 
+        logging.debug('Starting solving')
         self.status = self.solver.Solve(self.model)
+        logging.debug('Finished solving')
 
     def micro(self, i):
         return self.scenario.micros[self.scenario.micros_tpl[i]]

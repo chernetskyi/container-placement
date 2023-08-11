@@ -19,9 +19,11 @@ class PSOSolver(Solver):
                     particle.best_cost = particle.cost
 
                     if particle.best_cost < self.cost:
-                        logging.info(f"Swarm's best position updated at iteration {i}/{self.iterations}")
+                        logging.debug(f"Swarm's best position updated at iteration {i}/{self.iterations}")
                         self.position = particle.best_position[:]
                         self.cost = particle.best_cost
+
+        logging.debug('Finished solving')
 
     def __update_velocity(self, part, dim):
         n_len = len(self.scenario.nodes)
@@ -82,6 +84,9 @@ class PSOSolver(Solver):
         self.handle_position = handling_methods[position_handling]
 
         self.position = None
+
+        logging.debug('Starting solving')
+
         self.particles = [Particle(scenario,
                                    random_init_position,
                                    zero_init_velocity) for _ in range(particles)]
