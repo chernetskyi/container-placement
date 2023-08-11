@@ -90,8 +90,8 @@ class PSOSolver(Solver):
 
         if self.position is None:
             logging.info('No viable solutions were generated on init')
-            self.position = random.choice(particle.position
-                                          for particle in self.particles)[:]
+            self.position = random.choice([particle.position
+                                           for particle in self.particles])[:]
 
     @staticmethod
     def absorbing(vel, pos, max_pos):
