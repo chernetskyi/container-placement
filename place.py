@@ -46,15 +46,14 @@ def main():
     extra_args = {
         'cpsat': {},
         'pso': {
-            'particles': 20,
+            'particles': 30,
             'iterations': 100,
-            'inertia': 0.75,
-            'cognitive': 0.125,
-            'social': 0.125,
+            'inertia': 0.9,
+            'cognitive': 2.5,
+            'social': 2.5,
             'random_init_position': False,
             'zero_init_velocity': False,
-            'velocity_handling': 'none',
-            'position_handling': 'boundary'
+            'boundary_handling': 'absorbing'
         }
     }
 

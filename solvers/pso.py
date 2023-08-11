@@ -9,8 +9,7 @@ class PSOSolver(Solver):
         for i in range(self.iterations):
             for particle in self.particles:
                 for dim in range(self.scenario.conts):
-                    particle.velocity[dim] = self.__update_velocity(particle, dim)
-                    particle.position[dim] = self.__update_position(particle, dim)
+                    particle.velocity[dim], particle.position[dim] = self.__update_particle(particle, dim)
 
                 particle.cost = objective(self.scenario, particle.position)
 
@@ -25,20 +24,16 @@ class PSOSolver(Solver):
 
         logging.debug('Finished solving')
 
-    def __update_velocity(self, part, dim):
-        n_len = len(self.scenario.nodes)
+    def __update_particle(self, part, dim):
         r1, r2 = random.random(), random.random()
 
         dim_velocity = self.inertia * part.velocity[dim] + \
             self.cognitive * r1 * (part.best_position[dim] - part.position[dim]) + \
             self.social * r2 * (self.position[dim] - part.position[dim])
 
-        return self.handle_velocity(dim_velocity, -(n_len - 1), n_len)
+        dim_position = round(part.position[dim] + dim_velocity)
 
-    def __update_position(self, part, dim):
-        dim_position = int(part.position[dim] + part.velocity[dim])
-
-        return self.handle_position(dim_position, 0, len(self.scenario.nodes))
+        return self.handle_boundary(dim_velocity, dim_position, len(self.scenario.nodes) - 1)
 
     def solution(self):
         if self.cost == float('inf'):
@@ -64,24 +59,20 @@ class PSOSolver(Solver):
                  social,
                  random_init_position,
                  zero_init_velocity,
-                 velocity_handling,
-                 position_handling):
+                 boundary_handling):
 
         super().__init__(scenario)
 
         handling_methods = {
-            'none': PSOSolver.none_handle,
-            'boundary': PSOSolver.boundary_handle,
-            'periodic': PSOSolver.periodic_handle,
-            'random': PSOSolver.random_handle
+            'absorbing': PSOSolver.absorbing,
+            'reflecting': PSOSolver.reflecting
         }
 
         self.iterations = iterations
         self.inertia = inertia
         self.cognitive = cognitive
         self.social = social
-        self.handle_velocity = handling_methods[velocity_handling]
-        self.handle_position = handling_methods[position_handling]
+        self.handle_boundary = handling_methods[boundary_handling]
 
         self.position = None
 
@@ -103,28 +94,20 @@ class PSOSolver(Solver):
                                           for particle in self.particles)[:]
 
     @staticmethod
-    def none_handle(value, mn, mx):
-        return value
+    def absorbing(vel, pos, max_pos):
+        if pos < 0:
+            return 0, 0
+        elif pos > max_pos:
+            return 0, max_pos
+        return vel, pos
 
     @staticmethod
-    def boundary_handle(value, mn, mx):
-        if value < mn:
-            return mn
-        elif value >= mx:
-            return mx - 1
-        return value
-
-    @staticmethod
-    def periodic_handle(value, mn, mx):
-        if value >= mx:
-            return value % mx
-        elif value < mn:
-            return value % mx if mn >= 0 else (value % mx) - mx
-        return value
-
-    @staticmethod
-    def random_handle(value, mn, mx):
-        return value if mn <= value < mx else random.randrange(mn, mx)
+    def reflecting(vel, pos, max_pos):
+        if pos < 0:
+            return -vel, 0
+        elif pos > max_pos:
+            return -vel, max_pos
+        return vel, pos
 
 
 class Particle:
