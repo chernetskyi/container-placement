@@ -1,0 +1,136 @@
+data_cost:
+  interzone: 0.02
+  intrazone: 0.01
+datarate:
+  epic-koala:
+    sharp-bream: 9.43
+  heroic-eel:
+    united-sponge: 2.42
+  mint-dane:
+    epic-koala: 8.15
+    heroic-eel: 7.86
+  united-sponge:
+    prompt-bull: 4.84
+microservices:
+  epic-koala:
+    containers: 5
+    cpureq: 500
+    memreq: 1408
+  heroic-eel:
+    containers: 5
+    cpureq: 750
+    memreq: 5888
+  mint-dane:
+    containers: 5
+    cpureq: 1500
+    memreq: 7936
+  pet-sponge:
+    containers: 5
+    cpureq: 2250
+    memreq: 2176
+  poetic-liger:
+    containers: 5
+    cpureq: 1250
+    memreq: 4480
+  prompt-bull:
+    containers: 5
+    cpureq: 3000
+    memreq: 768
+  sharp-bream:
+    containers: 5
+    cpureq: 2000
+    memreq: 5120
+  trusty-burro:
+    containers: 5
+    cpureq: 2750
+    memreq: 3072
+  united-sponge:
+    containers: 5
+    cpureq: 1750
+    memreq: 2688
+nodes:
+  badger:
+    contlim: 93
+    cost: 128.24
+    cpulim: 4000
+    memlim: 36352
+    zone: beta
+  eagle:
+    contlim: 89
+    cost: 238.49
+    cpulim: 77000
+    memlim: 33280
+    zone: beta
+  finch:
+    contlim: 92
+    cost: 195.96
+    cpulim: 52000
+    memlim: 49664
+    zone: alpha
+  gnat:
+    contlim: 88
+    cost: 268.01
+    cpulim: 104000
+    memlim: 51712
+    zone: gamma
+  gnu:
+    contlim: 135
+    cost: 176.52
+    cpulim: 115000
+    memlim: 5120
+    zone: alpha
+  joey:
+    contlim: 32
+    cost: 135.7
+    cpulim: 24000
+    memlim: 31744
+    zone: gamma
+  lab:
+    contlim: 42
+    cost: 136.06
+    cpulim: 1000
+    memlim: 43008
+    zone: gamma
+  martin:
+    contlim: 121
+    cost: 222.52
+    cpulim: 45000
+    memlim: 49664
+    zone: beta
+  moose:
+    contlim: 98
+    cost: 79.84
+    cpulim: 1000
+    memlim: 35840
+    zone: beta
+  ocelot:
+    contlim: 87
+    cost: 208.88
+    cpulim: 92000
+    memlim: 26112
+    zone: alpha
+  oryx:
+    contlim: 43
+    cost: 183.67
+    cpulim: 75000
+    memlim: 23552
+    zone: alpha
+  raptor:
+    contlim: 91
+    cost: 338.84
+    cpulim: 71000
+    memlim: 62464
+    zone: alpha
+  shark:
+    contlim: 151
+    cost: 185.19
+    cpulim: 105000
+    memlim: 14848
+    zone: beta
+  urchin:
+    contlim: 140
+    cost: 190.78
+    cpulim: 101000
+    memlim: 9728
+    zone: gamma
+

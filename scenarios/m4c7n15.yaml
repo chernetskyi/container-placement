@@ -1,0 +1,115 @@
+data_cost:
+  interzone: 0.02
+  intrazone: 0.01
+datarate:
+  finer-imp:
+    able-beagle: 9.55
+microservices:
+  able-beagle:
+    containers: 7
+    cpureq: 2000
+    memreq: 3200
+  brief-beagle:
+    containers: 7
+    cpureq: 1250
+    memreq: 768
+  finer-imp:
+    containers: 7
+    cpureq: 1250
+    memreq: 256
+  neat-asp:
+    containers: 7
+    cpureq: 3750
+    memreq: 4352
+nodes:
+  asp:
+    contlim: 150
+    cost: 197.84
+    cpulim: 125000
+    memlim: 19968
+    zone: gamma
+  bird:
+    contlim: 143
+    cost: 192.0
+    cpulim: 112000
+    memlim: 11264
+    zone: beta
+  bison:
+    contlim: 109
+    cost: 275.5
+    cpulim: 94000
+    memlim: 27136
+    zone: beta
+  caiman:
+    contlim: 113
+    cost: 261.18
+    cpulim: 110000
+    memlim: 17408
+    zone: beta
+  egret:
+    contlim: 40
+    cost: 146.71
+    cpulim: 19000
+    memlim: 31744
+    zone: alpha
+  fly:
+    contlim: 39
+    cost: 51.86
+    cpulim: 28000
+    memlim: 512
+    zone: beta
+  guinea:
+    contlim: 18
+    cost: 90.16
+    cpulim: 14000
+    memlim: 16896
+    zone: beta
+  gull:
+    contlim: 72
+    cost: 331.23
+    cpulim: 125000
+    memlim: 50176
+    zone: gamma
+  lab:
+    contlim: 76
+    cost: 363.24
+    cpulim: 115000
+    memlim: 36864
+    zone: gamma
+  lamb:
+    contlim: 96
+    cost: 214.01
+    cpulim: 98000
+    memlim: 46080
+    zone: alpha
+  lion:
+    contlim: 102
+    cost: 302.19
+    cpulim: 59000
+    memlim: 50688
+    zone: alpha
+  mutt:
+    contlim: 35
+    cost: 102.81
+    cpulim: 65000
+    memlim: 8704
+    zone: alpha
+  parrot:
+    contlim: 72
+    cost: 250.61
+    cpulim: 110000
+    memlim: 9216
+    zone: gamma
+  pigeon:
+    contlim: 61
+    cost: 176.18
+    cpulim: 54000
+    memlim: 19456
+    zone: alpha
+  weasel:
+    contlim: 109
+    cost: 307.88
+    cpulim: 127000
+    memlim: 28160
+    zone: gamma
+

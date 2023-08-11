@@ -1,0 +1,124 @@
+data_cost:
+  interzone: 0.02
+  intrazone: 0.01
+datarate:
+  fleet-crane:
+    fond-martin: 6.44
+    golden-man: 4.5
+microservices:
+  ample-gar:
+    containers: 6
+    cpureq: 3250
+    memreq: 3712
+  crack-alien:
+    containers: 6
+    cpureq: 3000
+    memreq: 6912
+  driven-impala:
+    containers: 6
+    cpureq: 1750
+    memreq: 6528
+  fleet-crane:
+    containers: 6
+    cpureq: 4000
+    memreq: 2176
+  fond-martin:
+    containers: 6
+    cpureq: 3500
+    memreq: 4992
+  golden-man:
+    containers: 6
+    cpureq: 3250
+    memreq: 4864
+nodes:
+  boxer:
+    contlim: 130
+    cost: 234.25
+    cpulim: 94000
+    memlim: 43008
+    zone: beta
+  fly:
+    contlim: 39
+    cost: 125.57
+    cpulim: 61000
+    memlim: 23040
+    zone: alpha
+  guppy:
+    contlim: 77
+    cost: 232.31
+    cpulim: 64000
+    memlim: 49152
+    zone: alpha
+  kiwi:
+    contlim: 151
+    cost: 343.9
+    cpulim: 88000
+    memlim: 55296
+    zone: alpha
+  lamb:
+    contlim: 62
+    cost: 93.32
+    cpulim: 15000
+    memlim: 25088
+    zone: beta
+  mantis:
+    contlim: 109
+    cost: 366.76
+    cpulim: 88000
+    memlim: 50176
+    zone: beta
+  marmot:
+    contlim: 105
+    cost: 367.91
+    cpulim: 112000
+    memlim: 41472
+    zone: gamma
+  midge:
+    contlim: 75
+    cost: 94.63
+    cpulim: 61000
+    memlim: 5120
+    zone: beta
+  mole:
+    contlim: 89
+    cost: 208.62
+    cpulim: 33000
+    memlim: 40448
+    zone: alpha
+  orca:
+    contlim: 79
+    cost: 213.41
+    cpulim: 46000
+    memlim: 32768
+    zone: alpha
+  shiner:
+    contlim: 52
+    cost: 170.08
+    cpulim: 71000
+    memlim: 29696
+    zone: gamma
+  skink:
+    contlim: 64
+    cost: 272.63
+    cpulim: 97000
+    memlim: 35840
+    zone: beta
+  tomcat:
+    contlim: 74
+    cost: 176.37
+    cpulim: 31000
+    memlim: 44032
+    zone: gamma
+  wasp:
+    contlim: 94
+    cost: 283.74
+    cpulim: 94000
+    memlim: 34304
+    zone: alpha
+  wombat:
+    contlim: 188
+    cost: 268.83
+    cpulim: 126000
+    memlim: 39424
+    zone: gamma
+

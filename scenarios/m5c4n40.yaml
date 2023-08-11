@@ -1,0 +1,258 @@
+data_cost:
+  interzone: 0.02
+  intrazone: 0.01
+datarate:
+  chief-liger:
+    cool-possum: 6.74
+    sacred-colt: 1.08
+microservices:
+  big-maggot:
+    containers: 4
+    cpureq: 3250
+    memreq: 7040
+  chief-liger:
+    containers: 4
+    cpureq: 2000
+    memreq: 7040
+  cool-possum:
+    containers: 4
+    cpureq: 1250
+    memreq: 4480
+  sacred-colt:
+    containers: 4
+    cpureq: 4000
+    memreq: 3456
+  useful-coyote:
+    containers: 4
+    cpureq: 1500
+    memreq: 1920
+nodes:
+  bear:
+    contlim: 95
+    cost: 136.29
+    cpulim: 22000
+    memlim: 41472
+    zone: gamma
+  beetle:
+    contlim: 147
+    cost: 161.01
+    cpulim: 112000
+    memlim: 17920
+    zone: gamma
+  bunny:
+    contlim: 111
+    cost: 212.02
+    cpulim: 104000
+    memlim: 32768
+    zone: gamma
+  burro:
+    contlim: 45
+    cost: 75.64
+    cpulim: 9000
+    memlim: 25088
+    zone: gamma
+  caiman:
+    contlim: 104
+    cost: 193.73
+    cpulim: 85000
+    memlim: 12288
+    zone: alpha
+  chimp:
+    contlim: 56
+    cost: 158.23
+    cpulim: 38000
+    memlim: 45056
+    zone: gamma
+  cicada:
+    contlim: 45
+    cost: 63.56
+    cpulim: 31000
+    memlim: 13824
+    zone: alpha
+  collie:
+    contlim: 63
+    cost: 235.69
+    cpulim: 57000
+    memlim: 46080
+    zone: alpha
+  coral:
+    contlim: 144
+    cost: 335.12
+    cpulim: 121000
+    memlim: 30720
+    zone: alpha
+  coyote:
+    contlim: 47
+    cost: 196.11
+    cpulim: 64000
+    memlim: 21504
+    zone: gamma
+  dory:
+    contlim: 53
+    cost: 157.96
+    cpulim: 36000
+    memlim: 48128
+    zone: gamma
+  fawn:
+    contlim: 83
+    cost: 153.25
+    cpulim: 88000
+    memlim: 3072
+    zone: alpha
+  gar:
+    contlim: 140
+    cost: 174.61
+    cpulim: 23000
+    memlim: 51200
+    zone: beta
+  gnat:
+    contlim: 83
+    cost: 197.02
+    cpulim: 119000
+    memlim: 11776
+    zone: alpha
+  hippo:
+    contlim: 163
+    cost: 168.95
+    cpulim: 45000
+    memlim: 55808
+    zone: gamma
+  insect:
+    contlim: 5
+    cost: 21.25
+    cpulim: 1000
+    memlim: 5632
+    zone: gamma
+  kid:
+    contlim: 22
+    cost: 43.6
+    cpulim: 23000
+    memlim: 1024
+    zone: alpha
+  kite:
+    contlim: 54
+    cost: 120.9
+    cpulim: 10000
+    memlim: 54272
+    zone: alpha
+  liger:
+    contlim: 58
+    cost: 144.56
+    cpulim: 43000
+    memlim: 40960
+    zone: beta
+  lynx:
+    contlim: 68
+    cost: 248.6
+    cpulim: 49000
+    memlim: 40448
+    zone: alpha
+  mako:
+    contlim: 75
+    cost: 188.88
+    cpulim: 33000
+    memlim: 47616
+    zone: gamma
+  muskox:
+    contlim: 109
+    cost: 132.98
+    cpulim: 100000
+    memlim: 6144
+    zone: gamma
+  piglet:
+    contlim: 78
+    cost: 169.87
+    cpulim: 24000
+    memlim: 33280
+    zone: gamma
+  puma:
+    contlim: 31
+    cost: 77.66
+    cpulim: 35000
+    memlim: 10752
+    zone: gamma
+  rhino:
+    contlim: 166
+    cost: 255.42
+    cpulim: 65000
+    memlim: 60416
+    zone: alpha
+  rodent:
+    contlim: 77
+    cost: 210.23
+    cpulim: 85000
+    memlim: 16896
+    zone: beta
+  sheep:
+    contlim: 45
+    cost: 111.14
+    cpulim: 34000
+    memlim: 30720
+    zone: alpha
+  shrew:
+    contlim: 62
+    cost: 199.82
+    cpulim: 64000
+    memlim: 30208
+    zone: gamma
+  snail:
+    contlim: 140
+    cost: 423.15
+    cpulim: 116000
+    memlim: 64512
+    zone: gamma
+  sole:
+    contlim: 92
+    cost: 119.53
+    cpulim: 53000
+    memlim: 32768
+    zone: beta
+  swan:
+    contlim: 80
+    cost: 236.66
+    cpulim: 43000
+    memlim: 48128
+    zone: gamma
+  turkey:
+    contlim: 11
+    cost: 44.12
+    cpulim: 22000
+    memlim: 5120
+    zone: alpha
+  vervet:
+    contlim: 61
+    cost: 342.98
+    cpulim: 104000
+    memlim: 57856
+    zone: gamma
+  viper:
+    contlim: 38
+    cost: 152.42
+    cpulim: 12000
+    memlim: 33280
+    zone: alpha
+  wahoo:
+    contlim: 81
+    cost: 266.4
+    cpulim: 122000
+    memlim: 16896
+    zone: alpha
+  weevil:
+    contlim: 68
+    cost: 237.0
+    cpulim: 98000
+    memlim: 10752
+    zone: beta
+  wolf:
+    contlim: 72
+    cost: 150.32
+    cpulim: 106000
+    memlim: 1536
+    zone: beta
+  yeti:
+    contlim: 161
+    cost: 119.66
+    cpulim: 108000
+    memlim: 4096
+    zone: alpha
+

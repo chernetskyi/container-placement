@@ -26,7 +26,7 @@ def main():
                         type=int,
                         help='random number generator seed')
     parser.add_argument('solver',
-                        choices=('cpsat', 'pso'),
+                        choices=('cpsat', 'pso', 'mpso'),
                         help='name of the solver')
     parser.add_argument('scenario',
                         type=argparse.FileType('r'),
@@ -39,13 +39,24 @@ def main():
 
     solvers = {
         'cpsat': CPSATSolver,
-        'pso': PSOSolver
+        'pso': PSOSolver,
+        'mpso': PSOSolver
     }
     Solver = solvers[args.solver]
 
     extra_args = {
         'cpsat': {},
         'pso': {
+            'particles': 30,
+            'iterations': 100,
+            'inertia': 0.9,
+            'cognitive': 2.5,
+            'social': 2.5,
+            'random_init_position': True,
+            'zero_init_velocity': False,
+            'boundary_handling': 'absorbing'
+        },
+        'mpso': {
             'particles': 30,
             'iterations': 100,
             'inertia': 0.9,
@@ -67,7 +78,7 @@ def main():
     try:
         print(solver.solution(), file=args.output)
     except NoSolutionError:
-        pass
+        sys.exit(1)
 
 
 if __name__ == '__main__':

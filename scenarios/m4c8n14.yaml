@@ -1,0 +1,109 @@
+data_cost:
+  interzone: 0.02
+  intrazone: 0.01
+datarate:
+  apt-bat:
+    cute-pika: 1.12
+microservices:
+  apt-bat:
+    containers: 8
+    cpureq: 3000
+    memreq: 5632
+  better-salmon:
+    containers: 8
+    cpureq: 1750
+    memreq: 1024
+  cute-pika:
+    containers: 8
+    cpureq: 3500
+    memreq: 5760
+  novel-koi:
+    containers: 8
+    cpureq: 3750
+    memreq: 1408
+nodes:
+  beagle:
+    contlim: 15
+    cost: 38.24
+    cpulim: 14000
+    memlim: 6144
+    zone: alpha
+  cattle:
+    contlim: 86
+    cost: 369.9
+    cpulim: 89000
+    memlim: 59904
+    zone: gamma
+  collie:
+    contlim: 129
+    cost: 313.79
+    cpulim: 55000
+    memlim: 58880
+    zone: alpha
+  donkey:
+    contlim: 9
+    cost: 23.71
+    cpulim: 12000
+    memlim: 1536
+    zone: alpha
+  eel:
+    contlim: 96
+    cost: 268.62
+    cpulim: 115000
+    memlim: 53760
+    zone: beta
+  flea:
+    contlim: 52
+    cost: 88.59
+    cpulim: 27000
+    memlim: 25088
+    zone: beta
+  fox:
+    contlim: 98
+    cost: 220.6
+    cpulim: 99000
+    memlim: 11264
+    zone: beta
+  hound:
+    contlim: 77
+    cost: 327.35
+    cpulim: 73000
+    memlim: 54272
+    zone: beta
+  monkey:
+    contlim: 62
+    cost: 143.01
+    cpulim: 13000
+    memlim: 45056
+    zone: beta
+  oryx:
+    contlim: 186
+    cost: 358.31
+    cpulim: 94000
+    memlim: 65536
+    zone: gamma
+  rabbit:
+    contlim: 75
+    cost: 100.97
+    cpulim: 5000
+    memlim: 35328
+    zone: gamma
+  snake:
+    contlim: 121
+    cost: 211.22
+    cpulim: 48000
+    memlim: 64512
+    zone: gamma
+  snipe:
+    contlim: 37
+    cost: 121.37
+    cpulim: 67000
+    memlim: 13312
+    zone: alpha
+  tick:
+    contlim: 63
+    cost: 158.58
+    cpulim: 41000
+    memlim: 29184
+    zone: beta
+
